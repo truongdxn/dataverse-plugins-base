@@ -1,0 +1,75 @@
+{
+  "$comment": [
+    "Metadata snapshot the schema constants are generated from. Commit it.",
+    "",
+    "Refresh a table:  dv schema pull --env dev --tables contact,account",
+    "Regenerate only:  dv schema codegen",
+    "",
+    "A pull merges per table, so refreshing one leaves the others alone. Regenerating writes",
+    "src/Dataverse.Plugins.Abstractions/Schema/Schema.g.cs, which is linked into every plugin",
+    "assembly, making table, column and message names compile-checked.",
+    "",
+    "This starter snapshot was written by hand so the repo builds before anyone has connected to",
+    "an environment. It lists only stock columns that exist in every org, so your first real pull",
+    "will not remove a constant the sample depends on. Your pull replaces these entries with the",
+    "true metadata for your environment."
+  ],
+
+  "tables": [
+    {
+      "logicalName": "account",
+      "schemaName": "Account",
+      "columns": [
+        { "logicalName": "accountcategorycode", "schemaName": "AccountCategoryCode" },
+        { "logicalName": "accountid", "schemaName": "AccountId" },
+        { "logicalName": "accountnumber", "schemaName": "AccountNumber" },
+        { "logicalName": "createdon", "schemaName": "CreatedOn" },
+        { "logicalName": "description", "schemaName": "Description" },
+        { "logicalName": "emailaddress1", "schemaName": "EMailAddress1" },
+        { "logicalName": "modifiedon", "schemaName": "ModifiedOn" },
+        { "logicalName": "name", "schemaName": "Name" },
+        { "logicalName": "ownerid", "schemaName": "OwnerId" },
+        { "logicalName": "primarycontactid", "schemaName": "PrimaryContactId" },
+        { "logicalName": "statecode", "schemaName": "StateCode" },
+        { "logicalName": "statuscode", "schemaName": "StatusCode" },
+        { "logicalName": "telephone1", "schemaName": "Telephone1" }
+      ]
+    },
+    {
+      "logicalName": "contact",
+      "schemaName": "Contact",
+      "columns": [
+        { "logicalName": "contactid", "schemaName": "ContactId" },
+        { "logicalName": "createdon", "schemaName": "CreatedOn" },
+        { "logicalName": "description", "schemaName": "Description" },
+        { "logicalName": "emailaddress1", "schemaName": "EMailAddress1" },
+        { "logicalName": "firstname", "schemaName": "FirstName" },
+        { "logicalName": "fullname", "schemaName": "FullName" },
+        { "logicalName": "lastname", "schemaName": "LastName" },
+        { "logicalName": "middlename", "schemaName": "MiddleName" },
+        { "logicalName": "modifiedon", "schemaName": "ModifiedOn" },
+        { "logicalName": "ownerid", "schemaName": "OwnerId" },
+        { "logicalName": "parentcustomerid", "schemaName": "ParentCustomerId" },
+        { "logicalName": "statecode", "schemaName": "StateCode" },
+        { "logicalName": "statuscode", "schemaName": "StatusCode" },
+        { "logicalName": "telephone1", "schemaName": "Telephone1" }
+      ]
+    }
+  ],
+
+  "messages": [
+    "Assign",
+    "Associate",
+    "Create",
+    "Delete",
+    "Disassociate",
+    "GrantAccess",
+    "Merge",
+    "ModifyAccess",
+    "Retrieve",
+    "RetrieveMultiple",
+    "RevokeAccess",
+    "SetState",
+    "Update"
+  ]
+}

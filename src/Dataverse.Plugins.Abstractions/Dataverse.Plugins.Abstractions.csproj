@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    This project exists so the shared plugin code is compiled and analysed in one place.
+    Plugin assemblies do NOT reference the resulting DLL: the Dataverse sandbox loads exactly
+    one assembly per plugin registration and resolves no dependencies, so plugin projects LINK
+    these sources instead (see Abstractions.Sources.props).
+
+    Targets net462 rather than netstandard2.0 because Microsoft.CrmSdk.CoreAssemblies is a
+    .NET Framework package, and because it should compile under exactly the framework the
+    plugins it feeds are compiled under.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net462</TargetFramework>
+    <RootNamespace>Dataverse.Plugins.Abstractions</RootNamespace>
+    <AssemblyName>Dataverse.Plugins.Abstractions</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <!-- Deliberately NOT a plugin assembly: it is never registered in Dataverse. -->
+    <DataversePluginAssembly>false</DataversePluginAssembly>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.56" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.ServiceModel" />
+  </ItemGroup>
+
+</Project>

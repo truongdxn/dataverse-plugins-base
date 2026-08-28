@@ -1,0 +1,49 @@
+<Project>
+
+  <!--
+    Imported by every plugin assembly project. Compiles the registration attributes and the
+    plugin base classes directly INTO the plugin assembly, because Dataverse's sandbox resolves
+    no dependent assemblies for a registered plugin type.
+
+    Consequence worth knowing: each plugin assembly gets its own copy of the attribute types.
+    That is fine - the build tooling matches attributes by full type name, not assembly identity.
+
+    Importing this file is also what marks a project as a plugin assembly: it sets
+    DataversePluginAssembly, which is how 'dv manifest' discovers projects. Nothing has to be
+    registered in a central config file.
+  -->
+
+  <PropertyGroup>
+    <AbstractionsSourceRoot>$(MSBuildThisFileDirectory)</AbstractionsSourceRoot>
+
+    <!-- Marks this project for discovery by the dv tooling. -->
+    <DataversePluginAssembly>true</DataversePluginAssembly>
+
+    <!-- Sandbox (2) is the only isolation mode allowed online; None (1) is on-premises only. -->
+    <DataverseIsolationMode Condition="'$(DataverseIsolationMode)' == ''">Sandbox</DataverseIsolationMode>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(AbstractionsSourceRoot)Registration\**\*.cs">
+      <Link>Shared\Registration\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="$(AbstractionsSourceRoot)Runtime\**\*.cs">
+      <Link>Shared\Runtime\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+    <!--
+      Generated schema constants, so table, column and message names are compile-checked.
+      Regenerate with 'dv schema codegen'; refresh from an environment with 'dv schema pull'.
+      The glob tolerates the file not existing yet, which is what makes a fresh clone build.
+    -->
+    <Compile Include="$(AbstractionsSourceRoot)Schema\**\*.cs">
+      <Link>Shared\Schema\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.56" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+    <Reference Include="System.ServiceModel" />
+  </ItemGroup>
+
+</Project>

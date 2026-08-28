@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Dataverse plugin base",
+  "classifications": [ "Dataverse", "Plugin", "Power Platform" ],
+  "identity": "Dataverse.Plugins.Plugin.CSharp",
+  "name": "Dataverse plugin",
+  "description": "A single plugin class with its [PluginStep] registration already filled in.",
+  "shortName": "dv-plugin",
+  "tags": { "language": "C#", "type": "item" },
+  "sourceName": "DvPluginClass",
+  "symbols": {
+    "namespace": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "MyOrg.Plugins",
+      "replaces": "DvPluginNamespace",
+      "description": "Namespace for the new class."
+    },
+    "message": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "Update",
+      "replaces": "DV_MESSAGE",
+      "description": "SDK message, e.g. Create, Update, Delete, or a custom API name."
+    },
+    "entity": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "account",
+      "replaces": "DV_ENTITY",
+      "description": "Primary table logical name."
+    },
+    "stage": {
+      "type": "parameter",
+      "datatype": "choice",
+      "choices": [
+        { "choice": "PreValidation", "description": "Before the transaction opens. Best place to reject input." },
+        { "choice": "PreOperation", "description": "Inside the transaction, before the write." },
+        { "choice": "PostOperation", "description": "Inside the transaction, after the write." }
+      ],
+      "defaultValue": "PostOperation",
+      "replaces": "DV_STAGE",
+      "description": "Pipeline stage."
+    }
+  }
+}

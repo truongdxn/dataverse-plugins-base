@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net462</TargetFramework>
+    <RootNamespace>DvPluginAssembly</RootNamespace>
+    <AssemblyName>DvPluginAssembly</AssemblyName>
+
+    <!-- Dataverse resolves no dependent assemblies, so everything must land in this one DLL. -->
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+
+    <DataverseIsolationMode>DV_ISOLATION</DataverseIsolationMode>
+  </PropertyGroup>
+
+  <!--
+    Marks this project as a plugin assembly and links in the shared attributes and base classes.
+    This import is the only thing needed for 'dv manifest' to discover the project - there is no
+    central list to add it to.
+  -->
+  <!-- Path supplied by the repo-root Directory.Build.props, so this resolves at any depth. -->
+  <Import Project="$(AbstractionsSourcesProps)" />
+
+</Project>

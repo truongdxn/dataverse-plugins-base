@@ -1,0 +1,84 @@
+# Azure DevOps equivalent of .github/workflows/deploy.yml. Keep the two in step.
+#
+# The package is built once, from source, and that same file is what reaches every environment.
+# Building it needs no Dataverse connection.
+
+trigger:
+  branches:
+    include: [main]
+
+pr:
+  branches:
+    include: ['*']
+
+variables:
+  DOTNET_NOLOGO: 'true'
+  DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+  # Reused as the solution version so a package can always be traced back to its build.
+  solutionVersion: '1.0.0.$(Build.BuildId)'
+
+stages:
+  - stage: Build
+    jobs:
+      - job: BuildAndPack
+        # Plugin assemblies target net462; the packager wants Windows.
+        pool:
+          vmImage: windows-latest
+
+        steps:
+          - task: UseDotNet@2
+            displayName: Install .NET 8 SDK
+            inputs:
+              packageType: sdk
+              version: 8.0.x
+
+          - script: dotnet tool install --global Microsoft.PowerApps.CLI.Tool
+            displayName: Install Power Platform CLI
+
+          - pwsh: ./build/build.ps1 -Configuration Release
+            displayName: Build and validate
+
+          - pwsh: dotnet test DataverseBase.sln --configuration Release --nologo
+            displayName: Test
+
+          - pwsh: ./build/pack.ps1 -Configuration Release -Version $(solutionVersion)
+            displayName: Pack solution
+
+          - publish: artifacts
+            artifact: solution-package
+            displayName: Publish package
+
+  - stage: DeployTest
+    dependsOn: Build
+    condition: succeeded()
+    jobs:
+      # A deployment job binds to an ADO environment, so approvals and checks apply.
+      - deployment: ImportToTest
+        pool:
+          vmImage: windows-latest
+        environment: test
+
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+
+                - task: UseDotNet@2
+                  inputs:
+                    packageType: sdk
+                    version: 8.0.x
+
+                - download: current
+                  artifact: solution-package
+
+                - pwsh: |
+                    $package = (Get-ChildItem "$(Pipeline.Workspace)/solution-package/*.zip" | Select-Object -First 1).FullName
+                    ./build/deploy.ps1 -Environment test -Task import -Package $package
+                  displayName: Import solution
+                  # Names must match the *Var entries in config/environments.json. Map these from
+                  # a variable group or key vault and mark the secret as secret.
+                  env:
+                    DV_TEST_TENANT_ID: $(DV_TENANT_ID)
+                    DV_TEST_CLIENT_ID: $(DV_CLIENT_ID)
+                    DV_TEST_CLIENT_SECRET: $(DV_CLIENT_SECRET)

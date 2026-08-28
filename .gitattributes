@@ -1,0 +1,20 @@
+# Normalise line endings so the repo is consistent regardless of who commits.
+* text=auto eol=lf
+
+# Windows-native scripts must keep CRLF in the working tree. cmd.exe in particular
+# mis-parses a .cmd file with LF endings.
+*.ps1  text eol=crlf
+*.cmd  text eol=crlf
+*.bat  text eol=crlf
+*.sln  text eol=crlf
+
+# The bash shim must stay LF: a CRLF shebang fails on WSL and Linux with
+# "bad interpreter: /usr/bin/env^M".
+dv     text eol=lf
+
+# Generated, but committed so a fresh clone compiles. Marked so it is collapsed in diffs.
+src/Dataverse.Plugins.Abstractions/Schema/Schema.g.cs linguist-generated=true
+
+*.png  binary
+*.zip  binary
+*.dll  binary

@@ -1,0 +1,34 @@
+<Project>
+
+  <PropertyGroup>
+    <!-- Single place to bump the version stamped onto every assembly. The solution
+         package version in config/solution.json is deliberately separate: assemblies
+         and solutions version independently. -->
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <ImplicitUsings>disable</ImplicitUsings>
+
+    <!-- Deterministic output keeps the packed solution byte-stable across rebuilds,
+         so a re-pack with no source change produces an identical assembly. -->
+    <Deterministic>true</Deterministic>
+    <PathMap Condition="'$(CI)' != ''">$(MSBuildThisFileDirectory)=/_/</PathMap>
+
+    <ArtifactsRoot>$(MSBuildThisFileDirectory)artifacts\</ArtifactsRoot>
+
+    <!--
+      Directory.Build.props is imported automatically by every project beneath this folder, so
+      exposing the shared props path here lets a plugin project import it with no relative path.
+      That keeps the import working wherever the project is created - including when an IDE's
+      New Project dialog puts it somewhere other than src\.
+    -->
+    <DataverseBaseRoot>$(MSBuildThisFileDirectory)</DataverseBaseRoot>
+    <AbstractionsSourcesProps>$(MSBuildThisFileDirectory)src\Dataverse.Plugins.Abstractions\Abstractions.Sources.props</AbstractionsSourcesProps>
+  </PropertyGroup>
+
+</Project>

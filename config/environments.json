@@ -1,0 +1,35 @@
+{
+  "$comment": [
+    "Environment URLs only. Secrets NEVER live here - they are read from the environment",
+    "variables named below, so this file is safe to commit.",
+    "For local overrides create config/environments.local.json (git-ignored); it is",
+    "merged over this file when present."
+  ],
+
+  "environments": {
+    "dev": {
+      "url": "https://orgd3d75508.crm5.dynamics.com/",
+      "auth": "interactive",
+      "allowStepDelete": false,
+      "description": "Developer sandbox - 'dv sync' registers directly here."
+    },
+    "test": {
+      "url": "https://contoso-test.crm.dynamics.com",
+      "auth": "clientsecret",
+      "tenantIdVar": "DV_TEST_TENANT_ID",
+      "clientIdVar": "DV_TEST_CLIENT_ID",
+      "clientSecretVar": "DV_TEST_CLIENT_SECRET",
+      "allowStepDelete": false,
+      "description": "Managed by solution import only."
+    },
+    "prod": {
+      "url": "https://contoso.crm.dynamics.com",
+      "auth": "clientsecret",
+      "tenantIdVar": "DV_PROD_TENANT_ID",
+      "clientIdVar": "DV_PROD_CLIENT_ID",
+      "clientSecretVar": "DV_PROD_CLIENT_SECRET",
+      "allowStepDelete": false,
+      "description": "Managed by solution import only."
+    }
+  }
+}

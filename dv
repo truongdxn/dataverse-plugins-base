@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# Entry point for the dv CLI on bash-like shells (Git Bash, WSL).
+# Builds the tool when stale, then forwards every argument and the exit code.
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+tool_project="$repo_root/src/Dataverse.Plugins.Tooling/Dataverse.Plugins.Tooling.csproj"
+tool_dir="$repo_root/artifacts/tool"
+tool_dll="$tool_dir/dv.dll"
+
+# Find a dotnet that actually carries an SDK: a runtime-only install often shadows the real one.
+resolve_dotnet() {
+  local roots=()
+  [ -n "${DOTNET_ROOT:-}" ] && roots+=("$DOTNET_ROOT")
+  [ -n "${LOCALAPPDATA:-}" ] && roots+=("$LOCALAPPDATA/Microsoft/dotnet")
+  roots+=("$HOME/.dotnet" "/usr/share/dotnet" "/usr/local/share/dotnet")
+  [ -n "${ProgramFiles:-}" ] && roots+=("$ProgramFiles/dotnet")
+  command -v dotnet >/dev/null 2>&1 && roots+=("$(dirname "$(command -v dotnet)")")
+
+  for root in "${roots[@]}"; do
+    if [ -d "$root/sdk" ] && [ -n "$(ls -A "$root/sdk" 2>/dev/null)" ]; then
+      if [ -x "$root/dotnet" ]; then echo "$root/dotnet"; return 0; fi
+      if [ -f "$root/dotnet.exe" ]; then echo "$root/dotnet.exe"; return 0; fi
+    fi
+  done
+
+  echo "No .NET SDK found. Install one from https://dotnet.microsoft.com/download," >&2
+  echo "or set DOTNET_ROOT to an installation that has an 'sdk' folder." >&2
+  return 1
+}
+
+dotnet_exe="$(resolve_dotnet)"
+
+tool_is_stale() {
+  [ ! -f "$tool_dll" ] && return 0
+  # Any source newer than the built dll means a rebuild is due.
+  [ -n "$(find "$repo_root/src/Dataverse.Plugins.Tooling" \
+            \( -name bin -o -name obj \) -prune -o \
+            \( -name '*.cs' -o -name '*.csproj' \) -newer "$tool_dll" -print -quit 2>/dev/null)" ]
+}
+
+if [ -z "${DV_NO_BUILD:-}" ] && tool_is_stale; then
+  echo "Building dv..." >&2
+  "$dotnet_exe" build "$tool_project" --configuration Release --output "$tool_dir" --nologo -v quiet
+fi
+
+exec "$dotnet_exe" "$tool_dll" "$@"

@@ -1,0 +1,19 @@
+# Build output
+bin/
+obj/
+artifacts/
+*.user
+*.suo
+.vs/
+
+# Tooling
+.dotnet/
+*.binlog
+
+# Crashpad logs dropped into whatever folder an Electron app happened to be in
+debug.log
+
+# Local overrides & secrets - never commit these
+config/environments.local.json
+*.local.json
+.env

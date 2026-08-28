@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>dv</AssemblyName>
+    <RootNamespace>Dataverse.Plugins.Tooling</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <IsPackable>false</IsPackable>
+    <DataversePluginAssembly>false</DataversePluginAssembly>
+    <RollForward>latestMajor</RollForward>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- ServiceClient, for the direct-registration and import paths. -->
+    <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.2.5" />
+    <!-- Reads the net462 plugin assemblies for metadata only, without loading them. -->
+    <PackageReference Include="System.Reflection.MetadataLoadContext" Version="8.0.0" />
+  </ItemGroup>
+
+</Project>
