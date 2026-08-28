@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net462</TargetFramework>
+    <RootNamespace>Dataverse.Plugins.Testing</RootNamespace>
+    <AssemblyName>Dataverse.Plugins.Testing</AssemblyName>
+
+    <!-- Not a plugin assembly: it never gets registered, so 'dv' must not discover it. -->
+    <DataversePluginAssembly>false</DataversePluginAssembly>
+
+    <!--
+      net462 because it is referenced by test projects that reference net462 plugin assemblies.
+      Matching the plugin's own framework is what lets a test instantiate the plugin directly.
+    -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      Microsoft.Xrm.Sdk ONLY. This project deliberately does not reference
+      Dataverse.Plugins.Abstractions: those types are compiled into each plugin assembly
+      separately, so a reference here would produce a type that only LOOKS like the plugin's.
+      See PluginTestHost for the full explanation.
+    -->
+    <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.56" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>

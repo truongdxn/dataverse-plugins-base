@@ -1,18 +1,53 @@
 # Architecture
 
+## Scope
+
+This repo covers the **development phase** and nothing else. It declares steps, builds them, tests
+them, registers them into a developer sandbox, and produces a `.zip`.
+
+**Importing that `.zip` into any environment is out of scope** and belongs to another module. The
+consequences are load-bearing rather than cosmetic: there is no `import` command, no test or
+production environment, no client-secret authentication, and no place in this repo for a
+credential. Sign-in is interactive only, because everything that connects is something a developer
+runs at a keyboard.
+
+## Many solutions, one base
+
+```
+CRM/Shared/PluginBase/          the base — attributes, harness, tooling
+CRM/Plugins/<Solution>/         one folder per PowerApps solution, with its own config
+CRM/Solutions/<Solution>/       one .zip per solution
+```
+
+A project belongs to the solution whose folder it sits in: the nearest `solution.json` above it.
+MSBuild resolves that with `GetPathOfFileAbove` and `dv` walks the same directories, so the two
+cannot disagree — and moving a project between solutions is a move, with no file to edit
+afterwards.
+
+Everything solution-scoped lives beside that solution's code: `solution.json`, `schema.json`,
+`sdkmessages.json`, `Generated/Schema.g.cs`. Two solutions therefore never share a snapshot, so
+pulling a table for one cannot churn another's generated file or force an unrelated review.
+
+`config/environments.json` is the exception, and stays repo-wide: a sandbox belongs to a
+*developer*, not to a product.
+
+Which solution a command acts on is resolved highest-precedence-first — explicit `-s`, then the
+working directory, then `defaultSolution` in `dv.json`, then the only solution if there is one.
+Ambiguity fails and lists the names rather than picking one and being wrong.
+
 ## The manifest is the contract
 
 ```
-src/<Assembly>/  [PluginStep] attributes ─► dv manifest ─► manifest ─┬─► dv pack ─► .zip ─► dv import
-                                                                     └─► dv sync
+CRM/Plugins/<Solution>/<Assembly>/  [PluginStep] ─► manifest ─┬─► dv pack ─► .zip ─► another module imports it
+                                                              └─► dv sync ─► dev sandbox
 ```
 
 Steps are declared once, in attributes on the plugin class, and **everything downstream reads only
-the manifest**. That is what stops the direct-registration path and the packaged-import path from
+the manifest**. That is what stops the direct-registration path and the packaged path from
 disagreeing about what a step is: one definition, consumed twice.
 
-`dv manifest` writes it to `artifacts/manifest.json` — useful for seeing exactly what would be
-registered before anything is.
+`dv manifest` writes it to `artifacts/<Solution>/manifest.json` — useful for seeing exactly what
+would be registered before anything is.
 
 ## Typed schema constants
 
@@ -27,10 +62,10 @@ So the names are generated constants rather than literals:
     FilteringAttributes = new[] { Contact.Fields.FirstName })]
 ```
 
-`dv schema pull --env dev --tables contact,account` reads metadata into the committed
-`config/schema.json`; `dv schema codegen` turns that into
-`src/Dataverse.Plugins.Abstractions/Schema/Schema.g.cs`, which `Abstractions.Sources.props` links
-into every plugin assembly. The values are `const`, so they inline and cost the assemblies nothing.
+`dv schema pull -s <Solution> -e dev -t contact,account` reads metadata into that solution's
+committed `schema.json`; `dv schema codegen` turns it into the solution's `Generated/Schema.g.cs`,
+which `Abstractions.Sources.props` links into every plugin assembly *beneath that solution*. The
+values are `const`, so they inline and cost the assemblies nothing.
 
 Three details worth knowing:
 
@@ -39,8 +74,8 @@ Three details worth knowing:
   schema name already carries the casing.
 - **`--tables` is required and pulls merge per table.** There is no org-wide mode: it would generate
   an enormous file that is mostly noise, and refreshing one table must not disturb the others.
-- **The starter `config/schema.json` is hand-written** and lists only stock columns present in every
-  org, so a first real pull cannot remove a constant the sample depends on.
+- **A new solution starts with an empty `schema.json`**, so the first pull defines the snapshot
+  rather than merging into invented content.
 
 The generated file is committed so a fresh clone compiles without anyone connecting to Dataverse.
 
@@ -48,13 +83,18 @@ The generated file is committed so a fresh clone compiles without anyone connect
 
 Component GUIDs are derived, not random: RFC 4122 version 5 (SHA-1) over a fixed namespace plus the
 solution name and the component's logical key — see
-[`DeterministicGuid`](../src/Dataverse.Plugins.Tooling/Infrastructure/DeterministicGuid.cs).
+[`DeterministicGuid`](../CRM/Shared/PluginBase/src/Dataverse.Plugins.Tooling/Infrastructure/DeterministicGuid.cs).
 
-This is what makes the two deployment paths compose. A step created by `dv sync` in dev and the same
-step arriving via solution import in production carry the *same* `sdkmessageprocessingstepid`, so:
+Seeding with `solution.uniqueName` is also what keeps solutions apart: two solutions in this repo
+cannot produce a colliding component id, however similarly their assemblies are named. The flip
+side is that renaming `solution.uniqueName` re-identifies everything, so the next sync duplicates
+rather than updates. It is chosen once.
+
+This is what makes the two paths compose. A step created by `dv sync` in dev and the same step
+arriving via solution import elsewhere carry the *same* `sdkmessageprocessingstepid`, so:
 
 - re-running either is idempotent,
-- importing a package over a synced environment updates rather than duplicates,
+- a package imported over a synced environment updates rather than duplicates,
 - the package is byte-stable between builds when nothing changed.
 
 The namespace constant must never change. `DeterministicGuidTests` pins a known value, because a
@@ -82,16 +122,20 @@ two distinct components.
 
 ## Assembly discovery
 
-`dv manifest` globs `src/**/*.csproj` and asks **MSBuild** for each candidate's evaluated
+`dv` globs `CRM/Plugins/<Solution>/**/*.csproj` and asks **MSBuild** for each candidate's evaluated
 properties (`dotnet msbuild -getProperty:`). A project is a plugin assembly when
-`DataversePluginAssembly` is `true`, which `Abstractions.Sources.props` sets on import.
+`DataversePluginAssembly` is `true`, which `Abstractions.Sources.props` sets on import; it is a
+test project when `DataversePluginTests` is `true`, which `Testing.Sources.props` sets. One
+mechanism, two kinds of project.
 
 Asking MSBuild rather than reading the XML matters: the property is usually set by an import, not
 written in the project file, and MSBuild's `TargetPath` removes any need to guess where the build
 put the DLL.
 
 The upshot is that adding a project is New Project → build → deploy, with no central list to
-remember to update.
+remember to update. A project that imports the props but sits outside every solution folder is
+named in a warning rather than silently skipped, because putting it there is exactly what an IDE's
+New Project dialog does by default.
 
 ## Shared code is linked, not referenced
 
@@ -99,12 +143,20 @@ The Dataverse sandbox loads exactly one assembly per registered plugin type and 
 dependencies. A plugin referencing a separate `Abstractions.dll` fails at runtime with an
 assembly-load error.
 
-So `Abstractions.Sources.props` compiles the attributes, `PluginBase` and the generated
-`Schema.g.cs` **into** each plugin assembly as linked source. Each assembly therefore has its own copy of the attribute types, which
-is fine: the scanner matches attributes by full type name, not by assembly identity.
+So `Abstractions.Sources.props` compiles the attributes, `PluginBase` and the solution's generated
+`Schema.g.cs` **into** each plugin assembly as linked source. Each assembly therefore has its own
+copy of the attribute types, which is fine: the scanner matches attributes by full type name, not
+by assembly identity.
 
 `Dataverse.Plugins.Abstractions.csproj` still exists so that shared code is compiled and analysed
 in one place.
+
+**This is what dictates the test harness design.** Because every plugin assembly holds its own copy
+of `ILocalPluginContext`, those copies are different CLR types. A shared harness referencing its
+own copy could not hand it to somebody else's plugin. So `Dataverse.Plugins.Testing` references
+`Microsoft.Xrm.Sdk` and nothing else: it is an `IServiceProvider` and calls
+`IPlugin.Execute(IServiceProvider)` — the same seam the platform uses, and the one place types
+are genuinely shared. See [testing.md](testing.md).
 
 ## Reading net462 assemblies from a net8.0 tool
 
@@ -175,8 +227,8 @@ A packed step references its SDK message **by GUID only** — the customizations
 message-name element. Those ids are seeded per organization and stable, which is exactly why a
 solution containing plugin steps is portable between environments at all.
 
-`config/sdkmessages.json` caches the map. It is generated once by `dv messages pull` and committed,
-because CI has no environment to resolve ids against. `dv pack` fails with the missing names listed
+The solution's `sdkmessages.json` caches the map. It is generated once by `dv messages pull` and
+committed, because CI has no environment to resolve ids against. `dv pack` fails with the missing names listed
 rather than guessing.
 
 ### Known limitation
@@ -204,10 +256,18 @@ id would just collide.
 Verified locally, offline: the build, attribute scanning, validation, schema code generation, and
 the whole packaging path including a real `pac solution pack` whose output is inspected by tests.
 
-**Not verified here**, because both need a live Dataverse environment:
+Verified on the real tree: a packed `Sample` zip containing every step, image, assembly and plugin
+type with all four root components present; and two solutions packed side by side producing zero
+overlapping component ids.
 
-- Importing a package, and steps actually firing. Treat the first import into a scratch environment
-  as the remaining checkpoint.
-- The metadata and message queries in `dv schema pull`. The generator that consumes their output is
-  tested; the queries themselves are not. The starter `config/schema.json` was written by hand so
-  everything else could be verified without them.
+`dv schema pull` has been run successfully against a live org, so the metadata query path works.
+`CRM/Plugins/Sample/schema.json` and its generated constants came from that run.
+
+**Not verified here**, because each needs a live environment and an interactive sign-in:
+
+- `dv sync`, and steps actually firing. Treat the first sync into a scratch sandbox as the
+  remaining checkpoint.
+- `dv messages pull`. `Sample/sdkmessages.json` is still empty, so `dv pack` on Sample fails with
+  the missing messages named until somebody runs it. The packaging path itself was proven with a
+  temporary cache and by the golden test.
+- Importing a package. Out of scope for this repo entirely — another module owns it.

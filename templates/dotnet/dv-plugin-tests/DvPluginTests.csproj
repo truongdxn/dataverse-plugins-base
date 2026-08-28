@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>DvPluginTests</RootNamespace>
+    <AssemblyName>DvPluginTests</AssemblyName>
+
+    <!-- Which plugin assembly these tests cover. 'dv test -a <name>' filters on this. -->
+    <DataverseTestsFor>DV_TESTS_FOR</DataverseTestsFor>
+  </PropertyGroup>
+
+  <!--
+    Brings in the fake pipeline harness, xunit, and net462 to match the assembly under test.
+    Path supplied by the repo-root Directory.Build.props, so this resolves at any depth.
+  -->
+  <Import Project="$(PluginTestingProps)" />
+
+  <ItemGroup>
+    <!-- TODO: point this at the assembly named in DataverseTestsFor above. -->
+    <ProjectReference Include="..\DV_TESTS_FOR\DV_TESTS_FOR.csproj" />
+  </ItemGroup>
+
+</Project>

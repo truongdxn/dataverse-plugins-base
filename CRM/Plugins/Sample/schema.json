@@ -1,0 +1,2334 @@
+{
+  "$comment": [
+    "Metadata snapshot the schema constants are generated from. Commit it.",
+    "",
+    "Refresh a table:  dv schema pull --env dev --tables contact,account",
+    "Regenerate only:  dv schema codegen",
+    "",
+    "A pull merges per table, so refreshing one leaves the others alone. Regenerating writes",
+    "src/Dataverse.Plugins.Abstractions/Schema/Schema.g.cs, which is linked into every plugin",
+    "assembly, making table, column and message names compile-checked.",
+    "",
+    "This starter snapshot was written by hand so the repo builds before anyone has connected to",
+    "an environment. It lists only stock columns that exist in every org, so your first real pull",
+    "will not remove a constant the sample depends on. Your pull replaces these entries with the",
+    "true metadata for your environment."
+  ],
+  "generatedUtc": "2026-08-28T03:31:59.3068004+00:00",
+  "tables": [
+    {
+      "logicalName": "account",
+      "schemaName": "Account",
+      "columns": [
+        {
+          "logicalName": "accountcategorycode",
+          "schemaName": "AccountCategoryCode"
+        },
+        {
+          "logicalName": "accountcategorycodename",
+          "schemaName": "AccountCategoryCodeName"
+        },
+        {
+          "logicalName": "accountclassificationcode",
+          "schemaName": "AccountClassificationCode"
+        },
+        {
+          "logicalName": "accountclassificationcodename",
+          "schemaName": "AccountClassificationCodeName"
+        },
+        {
+          "logicalName": "accountid",
+          "schemaName": "AccountId"
+        },
+        {
+          "logicalName": "accountnumber",
+          "schemaName": "AccountNumber"
+        },
+        {
+          "logicalName": "accountratingcode",
+          "schemaName": "AccountRatingCode"
+        },
+        {
+          "logicalName": "accountratingcodename",
+          "schemaName": "AccountRatingCodeName"
+        },
+        {
+          "logicalName": "address1_addressid",
+          "schemaName": "Address1_AddressId"
+        },
+        {
+          "logicalName": "address1_addresstypecode",
+          "schemaName": "Address1_AddressTypeCode"
+        },
+        {
+          "logicalName": "address1_addresstypecodename",
+          "schemaName": "Address1_AddressTypeCodeName"
+        },
+        {
+          "logicalName": "address1_city",
+          "schemaName": "Address1_City"
+        },
+        {
+          "logicalName": "address1_composite",
+          "schemaName": "Address1_Composite"
+        },
+        {
+          "logicalName": "address1_country",
+          "schemaName": "Address1_Country"
+        },
+        {
+          "logicalName": "address1_county",
+          "schemaName": "Address1_County"
+        },
+        {
+          "logicalName": "address1_fax",
+          "schemaName": "Address1_Fax"
+        },
+        {
+          "logicalName": "address1_freighttermscode",
+          "schemaName": "Address1_FreightTermsCode"
+        },
+        {
+          "logicalName": "address1_freighttermscodename",
+          "schemaName": "Address1_FreightTermsCodeName"
+        },
+        {
+          "logicalName": "address1_latitude",
+          "schemaName": "Address1_Latitude"
+        },
+        {
+          "logicalName": "address1_line1",
+          "schemaName": "Address1_Line1"
+        },
+        {
+          "logicalName": "address1_line2",
+          "schemaName": "Address1_Line2"
+        },
+        {
+          "logicalName": "address1_line3",
+          "schemaName": "Address1_Line3"
+        },
+        {
+          "logicalName": "address1_longitude",
+          "schemaName": "Address1_Longitude"
+        },
+        {
+          "logicalName": "address1_name",
+          "schemaName": "Address1_Name"
+        },
+        {
+          "logicalName": "address1_postalcode",
+          "schemaName": "Address1_PostalCode"
+        },
+        {
+          "logicalName": "address1_postofficebox",
+          "schemaName": "Address1_PostOfficeBox"
+        },
+        {
+          "logicalName": "address1_primarycontactname",
+          "schemaName": "Address1_PrimaryContactName"
+        },
+        {
+          "logicalName": "address1_shippingmethodcode",
+          "schemaName": "Address1_ShippingMethodCode"
+        },
+        {
+          "logicalName": "address1_shippingmethodcodename",
+          "schemaName": "Address1_ShippingMethodCodeName"
+        },
+        {
+          "logicalName": "address1_stateorprovince",
+          "schemaName": "Address1_StateOrProvince"
+        },
+        {
+          "logicalName": "address1_telephone1",
+          "schemaName": "Address1_Telephone1"
+        },
+        {
+          "logicalName": "address1_telephone2",
+          "schemaName": "Address1_Telephone2"
+        },
+        {
+          "logicalName": "address1_telephone3",
+          "schemaName": "Address1_Telephone3"
+        },
+        {
+          "logicalName": "address1_upszone",
+          "schemaName": "Address1_UPSZone"
+        },
+        {
+          "logicalName": "address1_utcoffset",
+          "schemaName": "Address1_UTCOffset"
+        },
+        {
+          "logicalName": "address2_addressid",
+          "schemaName": "Address2_AddressId"
+        },
+        {
+          "logicalName": "address2_addresstypecode",
+          "schemaName": "Address2_AddressTypeCode"
+        },
+        {
+          "logicalName": "address2_addresstypecodename",
+          "schemaName": "Address2_AddressTypeCodeName"
+        },
+        {
+          "logicalName": "address2_city",
+          "schemaName": "Address2_City"
+        },
+        {
+          "logicalName": "address2_composite",
+          "schemaName": "Address2_Composite"
+        },
+        {
+          "logicalName": "address2_country",
+          "schemaName": "Address2_Country"
+        },
+        {
+          "logicalName": "address2_county",
+          "schemaName": "Address2_County"
+        },
+        {
+          "logicalName": "address2_fax",
+          "schemaName": "Address2_Fax"
+        },
+        {
+          "logicalName": "address2_freighttermscode",
+          "schemaName": "Address2_FreightTermsCode"
+        },
+        {
+          "logicalName": "address2_freighttermscodename",
+          "schemaName": "Address2_FreightTermsCodeName"
+        },
+        {
+          "logicalName": "address2_latitude",
+          "schemaName": "Address2_Latitude"
+        },
+        {
+          "logicalName": "address2_line1",
+          "schemaName": "Address2_Line1"
+        },
+        {
+          "logicalName": "address2_line2",
+          "schemaName": "Address2_Line2"
+        },
+        {
+          "logicalName": "address2_line3",
+          "schemaName": "Address2_Line3"
+        },
+        {
+          "logicalName": "address2_longitude",
+          "schemaName": "Address2_Longitude"
+        },
+        {
+          "logicalName": "address2_name",
+          "schemaName": "Address2_Name"
+        },
+        {
+          "logicalName": "address2_postalcode",
+          "schemaName": "Address2_PostalCode"
+        },
+        {
+          "logicalName": "address2_postofficebox",
+          "schemaName": "Address2_PostOfficeBox"
+        },
+        {
+          "logicalName": "address2_primarycontactname",
+          "schemaName": "Address2_PrimaryContactName"
+        },
+        {
+          "logicalName": "address2_shippingmethodcode",
+          "schemaName": "Address2_ShippingMethodCode"
+        },
+        {
+          "logicalName": "address2_shippingmethodcodename",
+          "schemaName": "Address2_ShippingMethodCodeName"
+        },
+        {
+          "logicalName": "address2_stateorprovince",
+          "schemaName": "Address2_StateOrProvince"
+        },
+        {
+          "logicalName": "address2_telephone1",
+          "schemaName": "Address2_Telephone1"
+        },
+        {
+          "logicalName": "address2_telephone2",
+          "schemaName": "Address2_Telephone2"
+        },
+        {
+          "logicalName": "address2_telephone3",
+          "schemaName": "Address2_Telephone3"
+        },
+        {
+          "logicalName": "address2_upszone",
+          "schemaName": "Address2_UPSZone"
+        },
+        {
+          "logicalName": "address2_utcoffset",
+          "schemaName": "Address2_UTCOffset"
+        },
+        {
+          "logicalName": "adx_createdbyipaddress",
+          "schemaName": "Adx_CreatedByIPAddress"
+        },
+        {
+          "logicalName": "adx_createdbyusername",
+          "schemaName": "Adx_CreatedByUsername"
+        },
+        {
+          "logicalName": "adx_modifiedbyipaddress",
+          "schemaName": "Adx_ModifiedByIPAddress"
+        },
+        {
+          "logicalName": "adx_modifiedbyusername",
+          "schemaName": "Adx_ModifiedByUsername"
+        },
+        {
+          "logicalName": "aging30",
+          "schemaName": "Aging30"
+        },
+        {
+          "logicalName": "aging30_base",
+          "schemaName": "Aging30_Base"
+        },
+        {
+          "logicalName": "aging60",
+          "schemaName": "Aging60"
+        },
+        {
+          "logicalName": "aging60_base",
+          "schemaName": "Aging60_Base"
+        },
+        {
+          "logicalName": "aging90",
+          "schemaName": "Aging90"
+        },
+        {
+          "logicalName": "aging90_base",
+          "schemaName": "Aging90_Base"
+        },
+        {
+          "logicalName": "businesstypecode",
+          "schemaName": "BusinessTypeCode"
+        },
+        {
+          "logicalName": "businesstypecodename",
+          "schemaName": "BusinessTypeCodeName"
+        },
+        {
+          "logicalName": "createdby",
+          "schemaName": "CreatedBy"
+        },
+        {
+          "logicalName": "createdbyexternalparty",
+          "schemaName": "CreatedByExternalParty"
+        },
+        {
+          "logicalName": "createdbyexternalpartyname",
+          "schemaName": "CreatedByExternalPartyName"
+        },
+        {
+          "logicalName": "createdbyexternalpartyyominame",
+          "schemaName": "CreatedByExternalPartyYomiName"
+        },
+        {
+          "logicalName": "createdbyname",
+          "schemaName": "CreatedByName"
+        },
+        {
+          "logicalName": "createdbyyominame",
+          "schemaName": "CreatedByYomiName"
+        },
+        {
+          "logicalName": "createdon",
+          "schemaName": "CreatedOn"
+        },
+        {
+          "logicalName": "createdonbehalfby",
+          "schemaName": "CreatedOnBehalfBy"
+        },
+        {
+          "logicalName": "createdonbehalfbyname",
+          "schemaName": "CreatedOnBehalfByName"
+        },
+        {
+          "logicalName": "createdonbehalfbyyominame",
+          "schemaName": "CreatedOnBehalfByYomiName"
+        },
+        {
+          "logicalName": "creditlimit",
+          "schemaName": "CreditLimit"
+        },
+        {
+          "logicalName": "creditlimit_base",
+          "schemaName": "CreditLimit_Base"
+        },
+        {
+          "logicalName": "creditonhold",
+          "schemaName": "CreditOnHold"
+        },
+        {
+          "logicalName": "creditonholdname",
+          "schemaName": "CreditOnHoldName"
+        },
+        {
+          "logicalName": "customersizecode",
+          "schemaName": "CustomerSizeCode"
+        },
+        {
+          "logicalName": "customersizecodename",
+          "schemaName": "CustomerSizeCodeName"
+        },
+        {
+          "logicalName": "customertypecode",
+          "schemaName": "CustomerTypeCode"
+        },
+        {
+          "logicalName": "customertypecodename",
+          "schemaName": "CustomerTypeCodeName"
+        },
+        {
+          "logicalName": "description",
+          "schemaName": "Description"
+        },
+        {
+          "logicalName": "donotbulkemail",
+          "schemaName": "DoNotBulkEMail"
+        },
+        {
+          "logicalName": "donotbulkemailname",
+          "schemaName": "DoNotBulkEMailName"
+        },
+        {
+          "logicalName": "donotbulkpostalmail",
+          "schemaName": "DoNotBulkPostalMail"
+        },
+        {
+          "logicalName": "donotbulkpostalmailname",
+          "schemaName": "DoNotBulkPostalMailName"
+        },
+        {
+          "logicalName": "donotemail",
+          "schemaName": "DoNotEMail"
+        },
+        {
+          "logicalName": "donotemailname",
+          "schemaName": "DoNotEMailName"
+        },
+        {
+          "logicalName": "donotfax",
+          "schemaName": "DoNotFax"
+        },
+        {
+          "logicalName": "donotfaxname",
+          "schemaName": "DoNotFaxName"
+        },
+        {
+          "logicalName": "donotphone",
+          "schemaName": "DoNotPhone"
+        },
+        {
+          "logicalName": "donotphonename",
+          "schemaName": "DoNotPhoneName"
+        },
+        {
+          "logicalName": "donotpostalmail",
+          "schemaName": "DoNotPostalMail"
+        },
+        {
+          "logicalName": "donotpostalmailname",
+          "schemaName": "DoNotPostalMailName"
+        },
+        {
+          "logicalName": "donotsendmarketingmaterialname",
+          "schemaName": "DoNotSendMarketingMaterialName"
+        },
+        {
+          "logicalName": "donotsendmm",
+          "schemaName": "DoNotSendMM"
+        },
+        {
+          "logicalName": "emailaddress1",
+          "schemaName": "EMailAddress1"
+        },
+        {
+          "logicalName": "emailaddress2",
+          "schemaName": "EMailAddress2"
+        },
+        {
+          "logicalName": "emailaddress3",
+          "schemaName": "EMailAddress3"
+        },
+        {
+          "logicalName": "entityimage",
+          "schemaName": "EntityImage"
+        },
+        {
+          "logicalName": "entityimageid",
+          "schemaName": "EntityImageId"
+        },
+        {
+          "logicalName": "entityimage_timestamp",
+          "schemaName": "EntityImage_Timestamp"
+        },
+        {
+          "logicalName": "entityimage_url",
+          "schemaName": "EntityImage_URL"
+        },
+        {
+          "logicalName": "exchangerate",
+          "schemaName": "ExchangeRate"
+        },
+        {
+          "logicalName": "fax",
+          "schemaName": "Fax"
+        },
+        {
+          "logicalName": "followemail",
+          "schemaName": "FollowEmail"
+        },
+        {
+          "logicalName": "followemailname",
+          "schemaName": "FollowEmailName"
+        },
+        {
+          "logicalName": "ftpsiteurl",
+          "schemaName": "FtpSiteURL"
+        },
+        {
+          "logicalName": "importsequencenumber",
+          "schemaName": "ImportSequenceNumber"
+        },
+        {
+          "logicalName": "industrycode",
+          "schemaName": "IndustryCode"
+        },
+        {
+          "logicalName": "industrycodename",
+          "schemaName": "IndustryCodeName"
+        },
+        {
+          "logicalName": "isprivatename",
+          "schemaName": "IsPrivateName"
+        },
+        {
+          "logicalName": "lastonholdtime",
+          "schemaName": "LastOnHoldTime"
+        },
+        {
+          "logicalName": "lastusedincampaign",
+          "schemaName": "LastUsedInCampaign"
+        },
+        {
+          "logicalName": "marketcap",
+          "schemaName": "MarketCap"
+        },
+        {
+          "logicalName": "marketcap_base",
+          "schemaName": "MarketCap_Base"
+        },
+        {
+          "logicalName": "marketingonly",
+          "schemaName": "MarketingOnly"
+        },
+        {
+          "logicalName": "marketingonlyname",
+          "schemaName": "MarketingOnlyName"
+        },
+        {
+          "logicalName": "masteraccountidname",
+          "schemaName": "MasterAccountIdName"
+        },
+        {
+          "logicalName": "masteraccountidyominame",
+          "schemaName": "MasterAccountIdYomiName"
+        },
+        {
+          "logicalName": "masterid",
+          "schemaName": "MasterId"
+        },
+        {
+          "logicalName": "merged",
+          "schemaName": "Merged"
+        },
+        {
+          "logicalName": "mergedname",
+          "schemaName": "MergedName"
+        },
+        {
+          "logicalName": "modifiedby",
+          "schemaName": "ModifiedBy"
+        },
+        {
+          "logicalName": "modifiedbyexternalparty",
+          "schemaName": "ModifiedByExternalParty"
+        },
+        {
+          "logicalName": "modifiedbyexternalpartyname",
+          "schemaName": "ModifiedByExternalPartyName"
+        },
+        {
+          "logicalName": "modifiedbyexternalpartyyominame",
+          "schemaName": "ModifiedByExternalPartyYomiName"
+        },
+        {
+          "logicalName": "modifiedbyname",
+          "schemaName": "ModifiedByName"
+        },
+        {
+          "logicalName": "modifiedbyyominame",
+          "schemaName": "ModifiedByYomiName"
+        },
+        {
+          "logicalName": "modifiedon",
+          "schemaName": "ModifiedOn"
+        },
+        {
+          "logicalName": "modifiedonbehalfby",
+          "schemaName": "ModifiedOnBehalfBy"
+        },
+        {
+          "logicalName": "modifiedonbehalfbyname",
+          "schemaName": "ModifiedOnBehalfByName"
+        },
+        {
+          "logicalName": "modifiedonbehalfbyyominame",
+          "schemaName": "ModifiedOnBehalfByYomiName"
+        },
+        {
+          "logicalName": "msa_managingpartnerid",
+          "schemaName": "msa_managingpartnerid"
+        },
+        {
+          "logicalName": "msa_managingpartneridname",
+          "schemaName": "msa_managingpartneridName"
+        },
+        {
+          "logicalName": "msa_managingpartneridyominame",
+          "schemaName": "msa_managingpartneridYomiName"
+        },
+        {
+          "logicalName": "name",
+          "schemaName": "Name"
+        },
+        {
+          "logicalName": "numberofemployees",
+          "schemaName": "NumberOfEmployees"
+        },
+        {
+          "logicalName": "onholdtime",
+          "schemaName": "OnHoldTime"
+        },
+        {
+          "logicalName": "overriddencreatedon",
+          "schemaName": "OverriddenCreatedOn"
+        },
+        {
+          "logicalName": "ownerid",
+          "schemaName": "OwnerId"
+        },
+        {
+          "logicalName": "owneridname",
+          "schemaName": "OwnerIdName"
+        },
+        {
+          "logicalName": "owneridtype",
+          "schemaName": "OwnerIdType"
+        },
+        {
+          "logicalName": "owneridyominame",
+          "schemaName": "OwnerIdYomiName"
+        },
+        {
+          "logicalName": "ownershipcode",
+          "schemaName": "OwnershipCode"
+        },
+        {
+          "logicalName": "ownershipcodename",
+          "schemaName": "OwnershipCodeName"
+        },
+        {
+          "logicalName": "owningbusinessunit",
+          "schemaName": "OwningBusinessUnit"
+        },
+        {
+          "logicalName": "owningbusinessunitname",
+          "schemaName": "OwningBusinessUnitName"
+        },
+        {
+          "logicalName": "owningteam",
+          "schemaName": "OwningTeam"
+        },
+        {
+          "logicalName": "owninguser",
+          "schemaName": "OwningUser"
+        },
+        {
+          "logicalName": "parentaccountid",
+          "schemaName": "ParentAccountId"
+        },
+        {
+          "logicalName": "parentaccountidname",
+          "schemaName": "ParentAccountIdName"
+        },
+        {
+          "logicalName": "parentaccountidyominame",
+          "schemaName": "ParentAccountIdYomiName"
+        },
+        {
+          "logicalName": "participatesinworkflow",
+          "schemaName": "ParticipatesInWorkflow"
+        },
+        {
+          "logicalName": "participatesinworkflowname",
+          "schemaName": "ParticipatesInWorkflowName"
+        },
+        {
+          "logicalName": "paymenttermscode",
+          "schemaName": "PaymentTermsCode"
+        },
+        {
+          "logicalName": "paymenttermscodename",
+          "schemaName": "PaymentTermsCodeName"
+        },
+        {
+          "logicalName": "preferredappointmentdaycode",
+          "schemaName": "PreferredAppointmentDayCode"
+        },
+        {
+          "logicalName": "preferredappointmentdaycodename",
+          "schemaName": "PreferredAppointmentDayCodeName"
+        },
+        {
+          "logicalName": "preferredappointmenttimecode",
+          "schemaName": "PreferredAppointmentTimeCode"
+        },
+        {
+          "logicalName": "preferredappointmenttimecodename",
+          "schemaName": "PreferredAppointmentTimeCodeName"
+        },
+        {
+          "logicalName": "preferredcontactmethodcode",
+          "schemaName": "PreferredContactMethodCode"
+        },
+        {
+          "logicalName": "preferredcontactmethodcodename",
+          "schemaName": "PreferredContactMethodCodeName"
+        },
+        {
+          "logicalName": "preferredsystemuserid",
+          "schemaName": "PreferredSystemUserId"
+        },
+        {
+          "logicalName": "preferredsystemuseridname",
+          "schemaName": "PreferredSystemUserIdName"
+        },
+        {
+          "logicalName": "preferredsystemuseridyominame",
+          "schemaName": "PreferredSystemUserIdYomiName"
+        },
+        {
+          "logicalName": "primarycontactid",
+          "schemaName": "PrimaryContactId"
+        },
+        {
+          "logicalName": "primarycontactidname",
+          "schemaName": "PrimaryContactIdName"
+        },
+        {
+          "logicalName": "primarycontactidyominame",
+          "schemaName": "PrimaryContactIdYomiName"
+        },
+        {
+          "logicalName": "primarysatoriid",
+          "schemaName": "PrimarySatoriId"
+        },
+        {
+          "logicalName": "primarytwitterid",
+          "schemaName": "PrimaryTwitterId"
+        },
+        {
+          "logicalName": "processid",
+          "schemaName": "ProcessId"
+        },
+        {
+          "logicalName": "revenue",
+          "schemaName": "Revenue"
+        },
+        {
+          "logicalName": "revenue_base",
+          "schemaName": "Revenue_Base"
+        },
+        {
+          "logicalName": "sharesoutstanding",
+          "schemaName": "SharesOutstanding"
+        },
+        {
+          "logicalName": "shippingmethodcode",
+          "schemaName": "ShippingMethodCode"
+        },
+        {
+          "logicalName": "shippingmethodcodename",
+          "schemaName": "ShippingMethodCodeName"
+        },
+        {
+          "logicalName": "sic",
+          "schemaName": "SIC"
+        },
+        {
+          "logicalName": "slaid",
+          "schemaName": "SLAId"
+        },
+        {
+          "logicalName": "slainvokedid",
+          "schemaName": "SLAInvokedId"
+        },
+        {
+          "logicalName": "slainvokedidname",
+          "schemaName": "SLAInvokedIdName"
+        },
+        {
+          "logicalName": "slaname",
+          "schemaName": "SLAName"
+        },
+        {
+          "logicalName": "stageid",
+          "schemaName": "StageId"
+        },
+        {
+          "logicalName": "statecode",
+          "schemaName": "StateCode"
+        },
+        {
+          "logicalName": "statecodename",
+          "schemaName": "StateCodeName"
+        },
+        {
+          "logicalName": "statuscode",
+          "schemaName": "StatusCode"
+        },
+        {
+          "logicalName": "statuscodename",
+          "schemaName": "StatusCodeName"
+        },
+        {
+          "logicalName": "stockexchange",
+          "schemaName": "StockExchange"
+        },
+        {
+          "logicalName": "telephone1",
+          "schemaName": "Telephone1"
+        },
+        {
+          "logicalName": "telephone2",
+          "schemaName": "Telephone2"
+        },
+        {
+          "logicalName": "telephone3",
+          "schemaName": "Telephone3"
+        },
+        {
+          "logicalName": "territorycode",
+          "schemaName": "TerritoryCode"
+        },
+        {
+          "logicalName": "territorycodename",
+          "schemaName": "TerritoryCodeName"
+        },
+        {
+          "logicalName": "tickersymbol",
+          "schemaName": "TickerSymbol"
+        },
+        {
+          "logicalName": "timespentbymeonemailandmeetings",
+          "schemaName": "TimeSpentByMeOnEmailAndMeetings"
+        },
+        {
+          "logicalName": "timezoneruleversionnumber",
+          "schemaName": "TimeZoneRuleVersionNumber"
+        },
+        {
+          "logicalName": "transactioncurrencyid",
+          "schemaName": "TransactionCurrencyId"
+        },
+        {
+          "logicalName": "transactioncurrencyidname",
+          "schemaName": "TransactionCurrencyIdName"
+        },
+        {
+          "logicalName": "traversedpath",
+          "schemaName": "TraversedPath"
+        },
+        {
+          "logicalName": "utcconversiontimezonecode",
+          "schemaName": "UTCConversionTimeZoneCode"
+        },
+        {
+          "logicalName": "versionnumber",
+          "schemaName": "VersionNumber"
+        },
+        {
+          "logicalName": "websiteurl",
+          "schemaName": "WebSiteURL"
+        },
+        {
+          "logicalName": "yominame",
+          "schemaName": "YomiName"
+        }
+      ]
+    },
+    {
+      "logicalName": "contact",
+      "schemaName": "Contact",
+      "columns": [
+        {
+          "logicalName": "accountid",
+          "schemaName": "AccountId"
+        },
+        {
+          "logicalName": "accountidname",
+          "schemaName": "AccountIdName"
+        },
+        {
+          "logicalName": "accountidyominame",
+          "schemaName": "AccountIdYomiName"
+        },
+        {
+          "logicalName": "accountrolecode",
+          "schemaName": "AccountRoleCode"
+        },
+        {
+          "logicalName": "accountrolecodename",
+          "schemaName": "AccountRoleCodeName"
+        },
+        {
+          "logicalName": "address1_addressid",
+          "schemaName": "Address1_AddressId"
+        },
+        {
+          "logicalName": "address1_addresstypecode",
+          "schemaName": "Address1_AddressTypeCode"
+        },
+        {
+          "logicalName": "address1_addresstypecodename",
+          "schemaName": "Address1_AddressTypeCodeName"
+        },
+        {
+          "logicalName": "address1_city",
+          "schemaName": "Address1_City"
+        },
+        {
+          "logicalName": "address1_composite",
+          "schemaName": "Address1_Composite"
+        },
+        {
+          "logicalName": "address1_country",
+          "schemaName": "Address1_Country"
+        },
+        {
+          "logicalName": "address1_county",
+          "schemaName": "Address1_County"
+        },
+        {
+          "logicalName": "address1_fax",
+          "schemaName": "Address1_Fax"
+        },
+        {
+          "logicalName": "address1_freighttermscode",
+          "schemaName": "Address1_FreightTermsCode"
+        },
+        {
+          "logicalName": "address1_freighttermscodename",
+          "schemaName": "Address1_FreightTermsCodeName"
+        },
+        {
+          "logicalName": "address1_latitude",
+          "schemaName": "Address1_Latitude"
+        },
+        {
+          "logicalName": "address1_line1",
+          "schemaName": "Address1_Line1"
+        },
+        {
+          "logicalName": "address1_line2",
+          "schemaName": "Address1_Line2"
+        },
+        {
+          "logicalName": "address1_line3",
+          "schemaName": "Address1_Line3"
+        },
+        {
+          "logicalName": "address1_longitude",
+          "schemaName": "Address1_Longitude"
+        },
+        {
+          "logicalName": "address1_name",
+          "schemaName": "Address1_Name"
+        },
+        {
+          "logicalName": "address1_postalcode",
+          "schemaName": "Address1_PostalCode"
+        },
+        {
+          "logicalName": "address1_postofficebox",
+          "schemaName": "Address1_PostOfficeBox"
+        },
+        {
+          "logicalName": "address1_primarycontactname",
+          "schemaName": "Address1_PrimaryContactName"
+        },
+        {
+          "logicalName": "address1_shippingmethodcode",
+          "schemaName": "Address1_ShippingMethodCode"
+        },
+        {
+          "logicalName": "address1_shippingmethodcodename",
+          "schemaName": "Address1_ShippingMethodCodeName"
+        },
+        {
+          "logicalName": "address1_stateorprovince",
+          "schemaName": "Address1_StateOrProvince"
+        },
+        {
+          "logicalName": "address1_telephone1",
+          "schemaName": "Address1_Telephone1"
+        },
+        {
+          "logicalName": "address1_telephone2",
+          "schemaName": "Address1_Telephone2"
+        },
+        {
+          "logicalName": "address1_telephone3",
+          "schemaName": "Address1_Telephone3"
+        },
+        {
+          "logicalName": "address1_upszone",
+          "schemaName": "Address1_UPSZone"
+        },
+        {
+          "logicalName": "address1_utcoffset",
+          "schemaName": "Address1_UTCOffset"
+        },
+        {
+          "logicalName": "address2_addressid",
+          "schemaName": "Address2_AddressId"
+        },
+        {
+          "logicalName": "address2_addresstypecode",
+          "schemaName": "Address2_AddressTypeCode"
+        },
+        {
+          "logicalName": "address2_addresstypecodename",
+          "schemaName": "Address2_AddressTypeCodeName"
+        },
+        {
+          "logicalName": "address2_city",
+          "schemaName": "Address2_City"
+        },
+        {
+          "logicalName": "address2_composite",
+          "schemaName": "Address2_Composite"
+        },
+        {
+          "logicalName": "address2_country",
+          "schemaName": "Address2_Country"
+        },
+        {
+          "logicalName": "address2_county",
+          "schemaName": "Address2_County"
+        },
+        {
+          "logicalName": "address2_fax",
+          "schemaName": "Address2_Fax"
+        },
+        {
+          "logicalName": "address2_freighttermscode",
+          "schemaName": "Address2_FreightTermsCode"
+        },
+        {
+          "logicalName": "address2_freighttermscodename",
+          "schemaName": "Address2_FreightTermsCodeName"
+        },
+        {
+          "logicalName": "address2_latitude",
+          "schemaName": "Address2_Latitude"
+        },
+        {
+          "logicalName": "address2_line1",
+          "schemaName": "Address2_Line1"
+        },
+        {
+          "logicalName": "address2_line2",
+          "schemaName": "Address2_Line2"
+        },
+        {
+          "logicalName": "address2_line3",
+          "schemaName": "Address2_Line3"
+        },
+        {
+          "logicalName": "address2_longitude",
+          "schemaName": "Address2_Longitude"
+        },
+        {
+          "logicalName": "address2_name",
+          "schemaName": "Address2_Name"
+        },
+        {
+          "logicalName": "address2_postalcode",
+          "schemaName": "Address2_PostalCode"
+        },
+        {
+          "logicalName": "address2_postofficebox",
+          "schemaName": "Address2_PostOfficeBox"
+        },
+        {
+          "logicalName": "address2_primarycontactname",
+          "schemaName": "Address2_PrimaryContactName"
+        },
+        {
+          "logicalName": "address2_shippingmethodcode",
+          "schemaName": "Address2_ShippingMethodCode"
+        },
+        {
+          "logicalName": "address2_shippingmethodcodename",
+          "schemaName": "Address2_ShippingMethodCodeName"
+        },
+        {
+          "logicalName": "address2_stateorprovince",
+          "schemaName": "Address2_StateOrProvince"
+        },
+        {
+          "logicalName": "address2_telephone1",
+          "schemaName": "Address2_Telephone1"
+        },
+        {
+          "logicalName": "address2_telephone2",
+          "schemaName": "Address2_Telephone2"
+        },
+        {
+          "logicalName": "address2_telephone3",
+          "schemaName": "Address2_Telephone3"
+        },
+        {
+          "logicalName": "address2_upszone",
+          "schemaName": "Address2_UPSZone"
+        },
+        {
+          "logicalName": "address2_utcoffset",
+          "schemaName": "Address2_UTCOffset"
+        },
+        {
+          "logicalName": "address3_addressid",
+          "schemaName": "Address3_AddressId"
+        },
+        {
+          "logicalName": "address3_addresstypecode",
+          "schemaName": "Address3_AddressTypeCode"
+        },
+        {
+          "logicalName": "address3_addresstypecodename",
+          "schemaName": "Address3_AddressTypeCodeName"
+        },
+        {
+          "logicalName": "address3_city",
+          "schemaName": "Address3_City"
+        },
+        {
+          "logicalName": "address3_composite",
+          "schemaName": "Address3_Composite"
+        },
+        {
+          "logicalName": "address3_country",
+          "schemaName": "Address3_Country"
+        },
+        {
+          "logicalName": "address3_county",
+          "schemaName": "Address3_County"
+        },
+        {
+          "logicalName": "address3_fax",
+          "schemaName": "Address3_Fax"
+        },
+        {
+          "logicalName": "address3_freighttermscode",
+          "schemaName": "Address3_FreightTermsCode"
+        },
+        {
+          "logicalName": "address3_freighttermscodename",
+          "schemaName": "Address3_FreightTermsCodeName"
+        },
+        {
+          "logicalName": "address3_latitude",
+          "schemaName": "Address3_Latitude"
+        },
+        {
+          "logicalName": "address3_line1",
+          "schemaName": "Address3_Line1"
+        },
+        {
+          "logicalName": "address3_line2",
+          "schemaName": "Address3_Line2"
+        },
+        {
+          "logicalName": "address3_line3",
+          "schemaName": "Address3_Line3"
+        },
+        {
+          "logicalName": "address3_longitude",
+          "schemaName": "Address3_Longitude"
+        },
+        {
+          "logicalName": "address3_name",
+          "schemaName": "Address3_Name"
+        },
+        {
+          "logicalName": "address3_postalcode",
+          "schemaName": "Address3_PostalCode"
+        },
+        {
+          "logicalName": "address3_postofficebox",
+          "schemaName": "Address3_PostOfficeBox"
+        },
+        {
+          "logicalName": "address3_primarycontactname",
+          "schemaName": "Address3_PrimaryContactName"
+        },
+        {
+          "logicalName": "address3_shippingmethodcode",
+          "schemaName": "Address3_ShippingMethodCode"
+        },
+        {
+          "logicalName": "address3_shippingmethodcodename",
+          "schemaName": "Address3_ShippingMethodCodeName"
+        },
+        {
+          "logicalName": "address3_stateorprovince",
+          "schemaName": "Address3_StateOrProvince"
+        },
+        {
+          "logicalName": "address3_telephone1",
+          "schemaName": "Address3_Telephone1"
+        },
+        {
+          "logicalName": "address3_telephone2",
+          "schemaName": "Address3_Telephone2"
+        },
+        {
+          "logicalName": "address3_telephone3",
+          "schemaName": "Address3_Telephone3"
+        },
+        {
+          "logicalName": "address3_upszone",
+          "schemaName": "Address3_UPSZone"
+        },
+        {
+          "logicalName": "address3_utcoffset",
+          "schemaName": "Address3_UTCOffset"
+        },
+        {
+          "logicalName": "adx_confirmremovepassword",
+          "schemaName": "adx_ConfirmRemovePassword"
+        },
+        {
+          "logicalName": "adx_confirmremovepasswordname",
+          "schemaName": "adx_confirmremovepasswordName"
+        },
+        {
+          "logicalName": "adx_createdbyipaddress",
+          "schemaName": "Adx_CreatedByIPAddress"
+        },
+        {
+          "logicalName": "adx_createdbyusername",
+          "schemaName": "Adx_CreatedByUsername"
+        },
+        {
+          "logicalName": "adx_identity_accessfailedcount",
+          "schemaName": "adx_identity_accessfailedcount"
+        },
+        {
+          "logicalName": "adx_identity_emailaddress1confirmed",
+          "schemaName": "adx_identity_emailaddress1confirmed"
+        },
+        {
+          "logicalName": "adx_identity_emailaddress1confirmedname",
+          "schemaName": "adx_identity_emailaddress1confirmedName"
+        },
+        {
+          "logicalName": "adx_identity_lastsuccessfullogin",
+          "schemaName": "adx_identity_lastsuccessfullogin"
+        },
+        {
+          "logicalName": "adx_identity_locallogindisabled",
+          "schemaName": "adx_identity_locallogindisabled"
+        },
+        {
+          "logicalName": "adx_identity_locallogindisabledname",
+          "schemaName": "adx_identity_locallogindisabledName"
+        },
+        {
+          "logicalName": "adx_identity_lockoutenabled",
+          "schemaName": "adx_identity_lockoutenabled"
+        },
+        {
+          "logicalName": "adx_identity_lockoutenabledname",
+          "schemaName": "adx_identity_lockoutenabledName"
+        },
+        {
+          "logicalName": "adx_identity_lockoutenddate",
+          "schemaName": "adx_identity_lockoutenddate"
+        },
+        {
+          "logicalName": "adx_identity_logonenabled",
+          "schemaName": "adx_identity_logonenabled"
+        },
+        {
+          "logicalName": "adx_identity_logonenabledname",
+          "schemaName": "adx_identity_logonenabledName"
+        },
+        {
+          "logicalName": "adx_identity_mobilephoneconfirmed",
+          "schemaName": "adx_identity_mobilephoneconfirmed"
+        },
+        {
+          "logicalName": "adx_identity_mobilephoneconfirmedname",
+          "schemaName": "adx_identity_mobilephoneconfirmedName"
+        },
+        {
+          "logicalName": "adx_identity_newpassword",
+          "schemaName": "adx_identity_newpassword"
+        },
+        {
+          "logicalName": "adx_identity_passwordhash",
+          "schemaName": "adx_identity_passwordhash"
+        },
+        {
+          "logicalName": "adx_identity_securitystamp",
+          "schemaName": "adx_identity_securitystamp"
+        },
+        {
+          "logicalName": "adx_identity_twofactorenabled",
+          "schemaName": "adx_identity_twofactorenabled"
+        },
+        {
+          "logicalName": "adx_identity_twofactorenabledname",
+          "schemaName": "adx_identity_twofactorenabledName"
+        },
+        {
+          "logicalName": "adx_identity_username",
+          "schemaName": "adx_identity_username"
+        },
+        {
+          "logicalName": "adx_modifiedbyipaddress",
+          "schemaName": "Adx_ModifiedByIPAddress"
+        },
+        {
+          "logicalName": "adx_modifiedbyusername",
+          "schemaName": "Adx_ModifiedByUsername"
+        },
+        {
+          "logicalName": "adx_organizationname",
+          "schemaName": "Adx_OrganizationName"
+        },
+        {
+          "logicalName": "adx_preferredlcid",
+          "schemaName": "adx_preferredlcid"
+        },
+        {
+          "logicalName": "adx_profilealert",
+          "schemaName": "adx_profilealert"
+        },
+        {
+          "logicalName": "adx_profilealertdate",
+          "schemaName": "adx_profilealertdate"
+        },
+        {
+          "logicalName": "adx_profilealertinstructions",
+          "schemaName": "adx_profilealertinstructions"
+        },
+        {
+          "logicalName": "adx_profilealertname",
+          "schemaName": "adx_profilealertName"
+        },
+        {
+          "logicalName": "adx_profileisanonymous",
+          "schemaName": "Adx_ProfileIsAnonymous"
+        },
+        {
+          "logicalName": "adx_profileisanonymousname",
+          "schemaName": "adx_profileisanonymousName"
+        },
+        {
+          "logicalName": "adx_profilelastactivity",
+          "schemaName": "Adx_ProfileLastActivity"
+        },
+        {
+          "logicalName": "adx_profilemodifiedon",
+          "schemaName": "adx_profilemodifiedon"
+        },
+        {
+          "logicalName": "adx_publicprofilecopy",
+          "schemaName": "adx_PublicProfileCopy"
+        },
+        {
+          "logicalName": "adx_timezone",
+          "schemaName": "Adx_TimeZone"
+        },
+        {
+          "logicalName": "aging30",
+          "schemaName": "Aging30"
+        },
+        {
+          "logicalName": "aging30_base",
+          "schemaName": "Aging30_Base"
+        },
+        {
+          "logicalName": "aging60",
+          "schemaName": "Aging60"
+        },
+        {
+          "logicalName": "aging60_base",
+          "schemaName": "Aging60_Base"
+        },
+        {
+          "logicalName": "aging90",
+          "schemaName": "Aging90"
+        },
+        {
+          "logicalName": "aging90_base",
+          "schemaName": "Aging90_Base"
+        },
+        {
+          "logicalName": "anniversary",
+          "schemaName": "Anniversary"
+        },
+        {
+          "logicalName": "annualincome",
+          "schemaName": "AnnualIncome"
+        },
+        {
+          "logicalName": "annualincome_base",
+          "schemaName": "AnnualIncome_Base"
+        },
+        {
+          "logicalName": "assistantname",
+          "schemaName": "AssistantName"
+        },
+        {
+          "logicalName": "assistantphone",
+          "schemaName": "AssistantPhone"
+        },
+        {
+          "logicalName": "birthdate",
+          "schemaName": "BirthDate"
+        },
+        {
+          "logicalName": "business2",
+          "schemaName": "Business2"
+        },
+        {
+          "logicalName": "callback",
+          "schemaName": "Callback"
+        },
+        {
+          "logicalName": "childrensnames",
+          "schemaName": "ChildrensNames"
+        },
+        {
+          "logicalName": "company",
+          "schemaName": "Company"
+        },
+        {
+          "logicalName": "contactid",
+          "schemaName": "ContactId"
+        },
+        {
+          "logicalName": "createdby",
+          "schemaName": "CreatedBy"
+        },
+        {
+          "logicalName": "createdbyexternalparty",
+          "schemaName": "CreatedByExternalParty"
+        },
+        {
+          "logicalName": "createdbyexternalpartyname",
+          "schemaName": "CreatedByExternalPartyName"
+        },
+        {
+          "logicalName": "createdbyexternalpartyyominame",
+          "schemaName": "CreatedByExternalPartyYomiName"
+        },
+        {
+          "logicalName": "createdbyname",
+          "schemaName": "CreatedByName"
+        },
+        {
+          "logicalName": "createdbyyominame",
+          "schemaName": "CreatedByYomiName"
+        },
+        {
+          "logicalName": "createdon",
+          "schemaName": "CreatedOn"
+        },
+        {
+          "logicalName": "createdonbehalfby",
+          "schemaName": "CreatedOnBehalfBy"
+        },
+        {
+          "logicalName": "createdonbehalfbyname",
+          "schemaName": "CreatedOnBehalfByName"
+        },
+        {
+          "logicalName": "createdonbehalfbyyominame",
+          "schemaName": "CreatedOnBehalfByYomiName"
+        },
+        {
+          "logicalName": "creditlimit",
+          "schemaName": "CreditLimit"
+        },
+        {
+          "logicalName": "creditlimit_base",
+          "schemaName": "CreditLimit_Base"
+        },
+        {
+          "logicalName": "creditonhold",
+          "schemaName": "CreditOnHold"
+        },
+        {
+          "logicalName": "creditonholdname",
+          "schemaName": "CreditOnHoldName"
+        },
+        {
+          "logicalName": "customersizecode",
+          "schemaName": "CustomerSizeCode"
+        },
+        {
+          "logicalName": "customersizecodename",
+          "schemaName": "CustomerSizeCodeName"
+        },
+        {
+          "logicalName": "customertypecode",
+          "schemaName": "CustomerTypeCode"
+        },
+        {
+          "logicalName": "customertypecodename",
+          "schemaName": "CustomerTypeCodeName"
+        },
+        {
+          "logicalName": "department",
+          "schemaName": "Department"
+        },
+        {
+          "logicalName": "description",
+          "schemaName": "Description"
+        },
+        {
+          "logicalName": "donotbulkemail",
+          "schemaName": "DoNotBulkEMail"
+        },
+        {
+          "logicalName": "donotbulkemailname",
+          "schemaName": "DoNotBulkEMailName"
+        },
+        {
+          "logicalName": "donotbulkpostalmail",
+          "schemaName": "DoNotBulkPostalMail"
+        },
+        {
+          "logicalName": "donotbulkpostalmailname",
+          "schemaName": "DoNotBulkPostalMailName"
+        },
+        {
+          "logicalName": "donotemail",
+          "schemaName": "DoNotEMail"
+        },
+        {
+          "logicalName": "donotemailname",
+          "schemaName": "DoNotEMailName"
+        },
+        {
+          "logicalName": "donotfax",
+          "schemaName": "DoNotFax"
+        },
+        {
+          "logicalName": "donotfaxname",
+          "schemaName": "DoNotFaxName"
+        },
+        {
+          "logicalName": "donotphone",
+          "schemaName": "DoNotPhone"
+        },
+        {
+          "logicalName": "donotphonename",
+          "schemaName": "DoNotPhoneName"
+        },
+        {
+          "logicalName": "donotpostalmail",
+          "schemaName": "DoNotPostalMail"
+        },
+        {
+          "logicalName": "donotpostalmailname",
+          "schemaName": "DoNotPostalMailName"
+        },
+        {
+          "logicalName": "donotsendmarketingmaterialname",
+          "schemaName": "DoNotSendMarketingMaterialName"
+        },
+        {
+          "logicalName": "donotsendmm",
+          "schemaName": "DoNotSendMM"
+        },
+        {
+          "logicalName": "educationcode",
+          "schemaName": "EducationCode"
+        },
+        {
+          "logicalName": "educationcodename",
+          "schemaName": "EducationCodeName"
+        },
+        {
+          "logicalName": "emailaddress1",
+          "schemaName": "EMailAddress1"
+        },
+        {
+          "logicalName": "emailaddress2",
+          "schemaName": "EMailAddress2"
+        },
+        {
+          "logicalName": "emailaddress3",
+          "schemaName": "EMailAddress3"
+        },
+        {
+          "logicalName": "employeeid",
+          "schemaName": "EmployeeId"
+        },
+        {
+          "logicalName": "entityimage",
+          "schemaName": "EntityImage"
+        },
+        {
+          "logicalName": "entityimageid",
+          "schemaName": "EntityImageId"
+        },
+        {
+          "logicalName": "entityimage_timestamp",
+          "schemaName": "EntityImage_Timestamp"
+        },
+        {
+          "logicalName": "entityimage_url",
+          "schemaName": "EntityImage_URL"
+        },
+        {
+          "logicalName": "exchangerate",
+          "schemaName": "ExchangeRate"
+        },
+        {
+          "logicalName": "externaluseridentifier",
+          "schemaName": "ExternalUserIdentifier"
+        },
+        {
+          "logicalName": "familystatuscode",
+          "schemaName": "FamilyStatusCode"
+        },
+        {
+          "logicalName": "familystatuscodename",
+          "schemaName": "FamilyStatusCodeName"
+        },
+        {
+          "logicalName": "fax",
+          "schemaName": "Fax"
+        },
+        {
+          "logicalName": "firstname",
+          "schemaName": "FirstName"
+        },
+        {
+          "logicalName": "followemail",
+          "schemaName": "FollowEmail"
+        },
+        {
+          "logicalName": "followemailname",
+          "schemaName": "FollowEmailName"
+        },
+        {
+          "logicalName": "ftpsiteurl",
+          "schemaName": "FtpSiteUrl"
+        },
+        {
+          "logicalName": "fullname",
+          "schemaName": "FullName"
+        },
+        {
+          "logicalName": "gendercode",
+          "schemaName": "GenderCode"
+        },
+        {
+          "logicalName": "gendercodename",
+          "schemaName": "GenderCodeName"
+        },
+        {
+          "logicalName": "governmentid",
+          "schemaName": "GovernmentId"
+        },
+        {
+          "logicalName": "haschildrencode",
+          "schemaName": "HasChildrenCode"
+        },
+        {
+          "logicalName": "haschildrencodename",
+          "schemaName": "HasChildrenCodeName"
+        },
+        {
+          "logicalName": "home2",
+          "schemaName": "Home2"
+        },
+        {
+          "logicalName": "importsequencenumber",
+          "schemaName": "ImportSequenceNumber"
+        },
+        {
+          "logicalName": "isbackofficecustomer",
+          "schemaName": "IsBackofficeCustomer"
+        },
+        {
+          "logicalName": "isbackofficecustomername",
+          "schemaName": "IsBackofficeCustomerName"
+        },
+        {
+          "logicalName": "isprivatename",
+          "schemaName": "IsPrivateName"
+        },
+        {
+          "logicalName": "jobtitle",
+          "schemaName": "JobTitle"
+        },
+        {
+          "logicalName": "lastname",
+          "schemaName": "LastName"
+        },
+        {
+          "logicalName": "lastonholdtime",
+          "schemaName": "LastOnHoldTime"
+        },
+        {
+          "logicalName": "lastusedincampaign",
+          "schemaName": "LastUsedInCampaign"
+        },
+        {
+          "logicalName": "leadsourcecode",
+          "schemaName": "LeadSourceCode"
+        },
+        {
+          "logicalName": "leadsourcecodename",
+          "schemaName": "LeadSourceCodeName"
+        },
+        {
+          "logicalName": "managername",
+          "schemaName": "ManagerName"
+        },
+        {
+          "logicalName": "managerphone",
+          "schemaName": "ManagerPhone"
+        },
+        {
+          "logicalName": "marketingonly",
+          "schemaName": "MarketingOnly"
+        },
+        {
+          "logicalName": "marketingonlyname",
+          "schemaName": "MarketingOnlyName"
+        },
+        {
+          "logicalName": "mastercontactidname",
+          "schemaName": "MasterContactIdName"
+        },
+        {
+          "logicalName": "mastercontactidyominame",
+          "schemaName": "MasterContactIdYomiName"
+        },
+        {
+          "logicalName": "masterid",
+          "schemaName": "MasterId"
+        },
+        {
+          "logicalName": "merged",
+          "schemaName": "Merged"
+        },
+        {
+          "logicalName": "mergedname",
+          "schemaName": "MergedName"
+        },
+        {
+          "logicalName": "middlename",
+          "schemaName": "MiddleName"
+        },
+        {
+          "logicalName": "mobilephone",
+          "schemaName": "MobilePhone"
+        },
+        {
+          "logicalName": "modifiedby",
+          "schemaName": "ModifiedBy"
+        },
+        {
+          "logicalName": "modifiedbyexternalparty",
+          "schemaName": "ModifiedByExternalParty"
+        },
+        {
+          "logicalName": "modifiedbyexternalpartyname",
+          "schemaName": "ModifiedByExternalPartyName"
+        },
+        {
+          "logicalName": "modifiedbyexternalpartyyominame",
+          "schemaName": "ModifiedByExternalPartyYomiName"
+        },
+        {
+          "logicalName": "modifiedbyname",
+          "schemaName": "ModifiedByName"
+        },
+        {
+          "logicalName": "modifiedbyyominame",
+          "schemaName": "ModifiedByYomiName"
+        },
+        {
+          "logicalName": "modifiedon",
+          "schemaName": "ModifiedOn"
+        },
+        {
+          "logicalName": "modifiedonbehalfby",
+          "schemaName": "ModifiedOnBehalfBy"
+        },
+        {
+          "logicalName": "modifiedonbehalfbyname",
+          "schemaName": "ModifiedOnBehalfByName"
+        },
+        {
+          "logicalName": "modifiedonbehalfbyyominame",
+          "schemaName": "ModifiedOnBehalfByYomiName"
+        },
+        {
+          "logicalName": "msa_managingpartnerid",
+          "schemaName": "msa_managingpartnerid"
+        },
+        {
+          "logicalName": "msa_managingpartneridname",
+          "schemaName": "msa_managingpartneridName"
+        },
+        {
+          "logicalName": "msa_managingpartneridyominame",
+          "schemaName": "msa_managingpartneridYomiName"
+        },
+        {
+          "logicalName": "msdyn_disablewebtracking",
+          "schemaName": "msdyn_disablewebtracking"
+        },
+        {
+          "logicalName": "msdyn_disablewebtrackingname",
+          "schemaName": "msdyn_disablewebtrackingName"
+        },
+        {
+          "logicalName": "msdyn_isminor",
+          "schemaName": "msdyn_isminor"
+        },
+        {
+          "logicalName": "msdyn_isminorname",
+          "schemaName": "msdyn_isminorName"
+        },
+        {
+          "logicalName": "msdyn_isminorwithparentalconsent",
+          "schemaName": "msdyn_isminorwithparentalconsent"
+        },
+        {
+          "logicalName": "msdyn_isminorwithparentalconsentname",
+          "schemaName": "msdyn_isminorwithparentalconsentName"
+        },
+        {
+          "logicalName": "msdyn_portaltermsagreementdate",
+          "schemaName": "msdyn_portaltermsagreementdate"
+        },
+        {
+          "logicalName": "mspp_userpreferredlcid",
+          "schemaName": "mspp_userpreferredlcid"
+        },
+        {
+          "logicalName": "mspp_userpreferredlcidname",
+          "schemaName": "mspp_userpreferredlcidName"
+        },
+        {
+          "logicalName": "nickname",
+          "schemaName": "NickName"
+        },
+        {
+          "logicalName": "numberofchildren",
+          "schemaName": "NumberOfChildren"
+        },
+        {
+          "logicalName": "onholdtime",
+          "schemaName": "OnHoldTime"
+        },
+        {
+          "logicalName": "overriddencreatedon",
+          "schemaName": "OverriddenCreatedOn"
+        },
+        {
+          "logicalName": "ownerid",
+          "schemaName": "OwnerId"
+        },
+        {
+          "logicalName": "owneridname",
+          "schemaName": "OwnerIdName"
+        },
+        {
+          "logicalName": "owneridtype",
+          "schemaName": "OwnerIdType"
+        },
+        {
+          "logicalName": "owneridyominame",
+          "schemaName": "OwnerIdYomiName"
+        },
+        {
+          "logicalName": "owningbusinessunit",
+          "schemaName": "OwningBusinessUnit"
+        },
+        {
+          "logicalName": "owningbusinessunitname",
+          "schemaName": "OwningBusinessUnitName"
+        },
+        {
+          "logicalName": "owningteam",
+          "schemaName": "OwningTeam"
+        },
+        {
+          "logicalName": "owninguser",
+          "schemaName": "OwningUser"
+        },
+        {
+          "logicalName": "pager",
+          "schemaName": "Pager"
+        },
+        {
+          "logicalName": "parentcontactid",
+          "schemaName": "ParentContactId"
+        },
+        {
+          "logicalName": "parentcontactidname",
+          "schemaName": "ParentContactIdName"
+        },
+        {
+          "logicalName": "parentcontactidyominame",
+          "schemaName": "ParentContactIdYomiName"
+        },
+        {
+          "logicalName": "parentcustomerid",
+          "schemaName": "ParentCustomerId"
+        },
+        {
+          "logicalName": "parentcustomeridname",
+          "schemaName": "ParentCustomerIdName"
+        },
+        {
+          "logicalName": "parentcustomeridtype",
+          "schemaName": "ParentCustomerIdType"
+        },
+        {
+          "logicalName": "parentcustomeridyominame",
+          "schemaName": "ParentCustomerIdYomiName"
+        },
+        {
+          "logicalName": "participatesinworkflow",
+          "schemaName": "ParticipatesInWorkflow"
+        },
+        {
+          "logicalName": "participatesinworkflowname",
+          "schemaName": "ParticipatesInWorkflowName"
+        },
+        {
+          "logicalName": "paymenttermscode",
+          "schemaName": "PaymentTermsCode"
+        },
+        {
+          "logicalName": "paymenttermscodename",
+          "schemaName": "PaymentTermsCodeName"
+        },
+        {
+          "logicalName": "preferredappointmentdaycode",
+          "schemaName": "PreferredAppointmentDayCode"
+        },
+        {
+          "logicalName": "preferredappointmentdaycodename",
+          "schemaName": "PreferredAppointmentDayCodeName"
+        },
+        {
+          "logicalName": "preferredappointmenttimecode",
+          "schemaName": "PreferredAppointmentTimeCode"
+        },
+        {
+          "logicalName": "preferredappointmenttimecodename",
+          "schemaName": "PreferredAppointmentTimeCodeName"
+        },
+        {
+          "logicalName": "preferredcontactmethodcode",
+          "schemaName": "PreferredContactMethodCode"
+        },
+        {
+          "logicalName": "preferredcontactmethodcodename",
+          "schemaName": "PreferredContactMethodCodeName"
+        },
+        {
+          "logicalName": "preferredsystemuserid",
+          "schemaName": "PreferredSystemUserId"
+        },
+        {
+          "logicalName": "preferredsystemuseridname",
+          "schemaName": "PreferredSystemUserIdName"
+        },
+        {
+          "logicalName": "preferredsystemuseridyominame",
+          "schemaName": "PreferredSystemUserIdYomiName"
+        },
+        {
+          "logicalName": "processid",
+          "schemaName": "ProcessId"
+        },
+        {
+          "logicalName": "salutation",
+          "schemaName": "Salutation"
+        },
+        {
+          "logicalName": "shippingmethodcode",
+          "schemaName": "ShippingMethodCode"
+        },
+        {
+          "logicalName": "shippingmethodcodename",
+          "schemaName": "ShippingMethodCodeName"
+        },
+        {
+          "logicalName": "slaid",
+          "schemaName": "SLAId"
+        },
+        {
+          "logicalName": "slainvokedid",
+          "schemaName": "SLAInvokedId"
+        },
+        {
+          "logicalName": "slainvokedidname",
+          "schemaName": "SLAInvokedIdName"
+        },
+        {
+          "logicalName": "slaname",
+          "schemaName": "SLAName"
+        },
+        {
+          "logicalName": "spousesname",
+          "schemaName": "SpousesName"
+        },
+        {
+          "logicalName": "stageid",
+          "schemaName": "StageId"
+        },
+        {
+          "logicalName": "statecode",
+          "schemaName": "StateCode"
+        },
+        {
+          "logicalName": "statecodename",
+          "schemaName": "StateCodeName"
+        },
+        {
+          "logicalName": "statuscode",
+          "schemaName": "StatusCode"
+        },
+        {
+          "logicalName": "statuscodename",
+          "schemaName": "StatusCodeName"
+        },
+        {
+          "logicalName": "subscriptionid",
+          "schemaName": "SubscriptionId"
+        },
+        {
+          "logicalName": "suffix",
+          "schemaName": "Suffix"
+        },
+        {
+          "logicalName": "telephone1",
+          "schemaName": "Telephone1"
+        },
+        {
+          "logicalName": "telephone2",
+          "schemaName": "Telephone2"
+        },
+        {
+          "logicalName": "telephone3",
+          "schemaName": "Telephone3"
+        },
+        {
+          "logicalName": "territorycode",
+          "schemaName": "TerritoryCode"
+        },
+        {
+          "logicalName": "territorycodename",
+          "schemaName": "TerritoryCodeName"
+        },
+        {
+          "logicalName": "timespentbymeonemailandmeetings",
+          "schemaName": "TimeSpentByMeOnEmailAndMeetings"
+        },
+        {
+          "logicalName": "timezoneruleversionnumber",
+          "schemaName": "TimeZoneRuleVersionNumber"
+        },
+        {
+          "logicalName": "transactioncurrencyid",
+          "schemaName": "TransactionCurrencyId"
+        },
+        {
+          "logicalName": "transactioncurrencyidname",
+          "schemaName": "TransactionCurrencyIdName"
+        },
+        {
+          "logicalName": "traversedpath",
+          "schemaName": "TraversedPath"
+        },
+        {
+          "logicalName": "utcconversiontimezonecode",
+          "schemaName": "UTCConversionTimeZoneCode"
+        },
+        {
+          "logicalName": "versionnumber",
+          "schemaName": "VersionNumber"
+        },
+        {
+          "logicalName": "websiteurl",
+          "schemaName": "WebSiteUrl"
+        },
+        {
+          "logicalName": "yomifirstname",
+          "schemaName": "YomiFirstName"
+        },
+        {
+          "logicalName": "yomifullname",
+          "schemaName": "YomiFullName"
+        },
+        {
+          "logicalName": "yomilastname",
+          "schemaName": "YomiLastName"
+        },
+        {
+          "logicalName": "yomimiddlename",
+          "schemaName": "YomiMiddleName"
+        }
+      ]
+    },
+    {
+      "logicalName": "cr017_book",
+      "schemaName": "cr017_Book",
+      "columns": [
+        {
+          "logicalName": "cr017_author",
+          "schemaName": "cr017_Author"
+        },
+        {
+          "logicalName": "cr017_available_quantity",
+          "schemaName": "cr017_Available_Quantity"
+        },
+        {
+          "logicalName": "cr017_bookid",
+          "schemaName": "cr017_BookId"
+        },
+        {
+          "logicalName": "cr017_booktitle",
+          "schemaName": "cr017_BookTitle"
+        },
+        {
+          "logicalName": "cr017_quantity",
+          "schemaName": "cr017_Quantity"
+        },
+        {
+          "logicalName": "cr017_tesst",
+          "schemaName": "cr017_tesst"
+        },
+        {
+          "logicalName": "cr017_tesst_base",
+          "schemaName": "cr017_tesst_Base"
+        },
+        {
+          "logicalName": "cr017_testedate",
+          "schemaName": "cr017_testedate"
+        },
+        {
+          "logicalName": "createdby",
+          "schemaName": "CreatedBy"
+        },
+        {
+          "logicalName": "createdbyname",
+          "schemaName": "CreatedByName"
+        },
+        {
+          "logicalName": "createdbyyominame",
+          "schemaName": "CreatedByYomiName"
+        },
+        {
+          "logicalName": "createdon",
+          "schemaName": "CreatedOn"
+        },
+        {
+          "logicalName": "createdonbehalfby",
+          "schemaName": "CreatedOnBehalfBy"
+        },
+        {
+          "logicalName": "createdonbehalfbyname",
+          "schemaName": "CreatedOnBehalfByName"
+        },
+        {
+          "logicalName": "createdonbehalfbyyominame",
+          "schemaName": "CreatedOnBehalfByYomiName"
+        },
+        {
+          "logicalName": "exchangerate",
+          "schemaName": "ExchangeRate"
+        },
+        {
+          "logicalName": "importsequencenumber",
+          "schemaName": "ImportSequenceNumber"
+        },
+        {
+          "logicalName": "modifiedby",
+          "schemaName": "ModifiedBy"
+        },
+        {
+          "logicalName": "modifiedbyname",
+          "schemaName": "ModifiedByName"
+        },
+        {
+          "logicalName": "modifiedbyyominame",
+          "schemaName": "ModifiedByYomiName"
+        },
+        {
+          "logicalName": "modifiedon",
+          "schemaName": "ModifiedOn"
+        },
+        {
+          "logicalName": "modifiedonbehalfby",
+          "schemaName": "ModifiedOnBehalfBy"
+        },
+        {
+          "logicalName": "modifiedonbehalfbyname",
+          "schemaName": "ModifiedOnBehalfByName"
+        },
+        {
+          "logicalName": "modifiedonbehalfbyyominame",
+          "schemaName": "ModifiedOnBehalfByYomiName"
+        },
+        {
+          "logicalName": "overriddencreatedon",
+          "schemaName": "OverriddenCreatedOn"
+        },
+        {
+          "logicalName": "ownerid",
+          "schemaName": "OwnerId"
+        },
+        {
+          "logicalName": "owneridname",
+          "schemaName": "OwnerIdName"
+        },
+        {
+          "logicalName": "owneridtype",
+          "schemaName": "OwnerIdType"
+        },
+        {
+          "logicalName": "owneridyominame",
+          "schemaName": "OwnerIdYomiName"
+        },
+        {
+          "logicalName": "owningbusinessunit",
+          "schemaName": "OwningBusinessUnit"
+        },
+        {
+          "logicalName": "owningbusinessunitname",
+          "schemaName": "OwningBusinessUnitName"
+        },
+        {
+          "logicalName": "owningteam",
+          "schemaName": "OwningTeam"
+        },
+        {
+          "logicalName": "owninguser",
+          "schemaName": "OwningUser"
+        },
+        {
+          "logicalName": "statecode",
+          "schemaName": "statecode"
+        },
+        {
+          "logicalName": "statecodename",
+          "schemaName": "statecodeName"
+        },
+        {
+          "logicalName": "statuscode",
+          "schemaName": "statuscode"
+        },
+        {
+          "logicalName": "statuscodename",
+          "schemaName": "statuscodeName"
+        },
+        {
+          "logicalName": "timezoneruleversionnumber",
+          "schemaName": "TimeZoneRuleVersionNumber"
+        },
+        {
+          "logicalName": "transactioncurrencyid",
+          "schemaName": "TransactionCurrencyId"
+        },
+        {
+          "logicalName": "transactioncurrencyidname",
+          "schemaName": "TransactionCurrencyIdName"
+        },
+        {
+          "logicalName": "utcconversiontimezonecode",
+          "schemaName": "UTCConversionTimeZoneCode"
+        },
+        {
+          "logicalName": "versionnumber",
+          "schemaName": "VersionNumber"
+        }
+      ]
+    }
+  ],
+  "messages": [
+    "adx_SendEmailConfirmationToContact",
+    "adx_SendEmailTwoFactorCodeToContact",
+    "adx_SendPasswordResetToContact",
+    "Archive",
+    "Assign",
+    "Associate",
+    "BulkArchive",
+    "BulkRetain",
+    "Create",
+    "CreateMultiple",
+    "CreateMultipleLegacy",
+    "Delete",
+    "DeleteMultiple",
+    "Disassociate",
+    "GrantAccess",
+    "IsValidStateTransition",
+    "Merge",
+    "ModifyAccess",
+    "PurgeArchivedContent",
+    "PurgeRetainedContent",
+    "Retain",
+    "Retrieve",
+    "RetrieveMultiple",
+    "RetrievePrincipalAccess",
+    "RetrieveSharedPrincipalsAndAccess",
+    "RevokeAccess",
+    "RollbackRetain",
+    "SetState",
+    "SetStateDynamicEntity",
+    "Update",
+    "UpdateMultiple",
+    "UpdateMultipleLegacy",
+    "ValidateArchiveConfig",
+    "ValidateRetentionConfig"
+  ]
+}

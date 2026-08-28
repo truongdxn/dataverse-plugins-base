@@ -1,0 +1,71 @@
+<Project>
+
+  <!--
+    Imported by every plugin assembly project. Compiles the registration attributes and the
+    plugin base classes directly INTO the plugin assembly, because Dataverse's sandbox resolves
+    no dependent assemblies for a registered plugin type.
+
+    Consequence worth knowing: each plugin assembly gets its own copy of the attribute types.
+    That is fine - the build tooling matches attributes by full type name, not assembly identity.
+    It is also why the test harness talks only in Microsoft.Xrm.Sdk types; see
+    Dataverse.Plugins.Testing.
+
+    Importing this file is also what marks a project as a plugin assembly: it sets
+    DataversePluginAssembly, which is how 'dv' discovers projects. Nothing has to be registered
+    in a central config file.
+  -->
+
+  <PropertyGroup>
+    <AbstractionsSourceRoot>$(MSBuildThisFileDirectory)</AbstractionsSourceRoot>
+
+    <!-- Marks this project for discovery by the dv tooling. -->
+    <DataversePluginAssembly>true</DataversePluginAssembly>
+
+    <!-- Sandbox (2) is the only isolation mode allowed online; None (1) is on-premises only. -->
+    <DataverseIsolationMode Condition="'$(DataverseIsolationMode)' == ''">Sandbox</DataverseIsolationMode>
+
+    <!--
+      Which PowerApps solution this assembly belongs to is decided by where the project sits:
+      the nearest solution.json above it. That is the same rule 'dv' applies, so MSBuild and the
+      tooling can never disagree about it, and moving a project between solutions is a move with
+      no file to edit afterwards.
+    -->
+    <DataverseSolutionFile Condition="'$(DataverseSolutionFile)' == ''">$([MSBuild]::GetPathOfFileAbove('solution.json', '$(MSBuildProjectDirectory)'))</DataverseSolutionFile>
+    <DataverseSolutionDirectory Condition="'$(DataverseSolutionFile)' != ''">$([System.IO.Path]::GetDirectoryName('$(DataverseSolutionFile)'))</DataverseSolutionDirectory>
+  </PropertyGroup>
+
+  <Target Name="DataverseRequireSolution" BeforeTargets="BeforeBuild" Condition="'$(DataverseSolutionFile)' == ''">
+    <!--
+      Without this the project would compile, silently miss every schema constant, and fail with
+      a wall of "the name 'Contact' does not exist" - which says nothing about the real cause.
+    -->
+    <Error Text="$(MSBuildProjectFile) is a plugin assembly but no solution.json was found in any folder above it. A plugin assembly must live inside a solution folder, e.g. CRM/Plugins/&lt;Solution&gt;/$(MSBuildProjectName)/. Create one with 'dotnet new dv-solution -n &lt;Solution&gt;'." />
+  </Target>
+
+  <ItemGroup>
+    <Compile Include="$(AbstractionsSourceRoot)Registration\**\*.cs">
+      <Link>Shared\Registration\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="$(AbstractionsSourceRoot)Runtime\**\*.cs">
+      <Link>Shared\Runtime\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+    <!--
+      This solution's generated schema constants, so table, column and message names are
+      compile-checked. Each solution generates its own, so pulling a table for one solution
+      cannot churn another's file.
+
+      Regenerate with 'dv schema codegen'; refresh from an environment with 'dv schema pull'.
+      The glob tolerates the file not existing yet, which is what makes a fresh clone build.
+    -->
+    <Compile Include="$(DataverseSolutionDirectory)\Generated\**\*.cs" Condition="'$(DataverseSolutionDirectory)' != ''">
+      <Link>Generated\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.56" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+    <Reference Include="System.ServiceModel" />
+  </ItemGroup>
+
+</Project>

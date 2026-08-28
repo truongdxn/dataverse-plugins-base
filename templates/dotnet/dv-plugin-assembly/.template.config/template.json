@@ -1,12 +1,19 @@
 {
   "$schema": "http://json.schemastore.org/template",
   "author": "Dataverse plugin base",
-  "classifications": [ "Dataverse", "Plugin", "Power Platform" ],
+  "classifications": [
+    "Dataverse",
+    "Plugin",
+    "Power Platform"
+  ],
   "identity": "Dataverse.Plugins.Assembly.CSharp",
   "name": "Dataverse plugin assembly",
-  "description": "A plugin assembly project that registers itself with the dv tooling. No config file needs editing after creating it.",
+  "description": "A plugin assembly project that registers itself with the dv tooling. Create it inside a solution folder (CRM/Plugins/<Solution>/) - that placement is what decides which PowerApps solution it packs into. No config file needs editing.",
   "shortName": "dv-plugin-assembly",
-  "tags": { "language": "C#", "type": "project" },
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
   "sourceName": "DvPluginAssembly",
   "preferNameDirectory": true,
   "symbols": {
@@ -14,8 +21,14 @@
       "type": "parameter",
       "datatype": "choice",
       "choices": [
-        { "choice": "Sandbox", "description": "Sandboxed. Required online." },
-        { "choice": "None", "description": "Full trust. On-premises only." }
+        {
+          "choice": "Sandbox",
+          "description": "Sandboxed. Required online."
+        },
+        {
+          "choice": "None",
+          "description": "Full trust. On-premises only."
+        }
       ],
       "defaultValue": "Sandbox",
       "replaces": "DV_ISOLATION",

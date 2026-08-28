@@ -1,0 +1,23 @@
+{
+  "$comment": [
+    "Repo-wide defaults, and the marker dv walks up the directory tree to find. Its presence is",
+    "what makes 'dv' work from any folder inside the repo.",
+    "",
+    "Everything that belongs to ONE PowerApps solution lives beside that solution's code under",
+    "pluginsDirectory - not here. This file only holds what is true for the whole repo."
+  ],
+
+  "pluginsDirectory": "CRM/Plugins",
+
+  "$comment_output": [
+    "Where 'dv pack' writes the .zip. '{solution}' is replaced with the solution name.",
+    "Overridden per solution by 'packageOutput' in its solution.json, and per run by --out."
+  ],
+  "packageOutputDirectory": "CRM/Solutions/{solution}",
+
+  "$comment_default": [
+    "Used when a command names no solution and the working directory is not inside one.",
+    "Leave it out to force -s whenever the repo holds more than a single solution."
+  ],
+  "defaultSolution": "Sample"
+}

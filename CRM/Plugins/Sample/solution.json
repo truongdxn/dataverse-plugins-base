@@ -1,0 +1,35 @@
+{
+  "$comment": [
+    "Publisher and solution identity for THIS PowerApps solution. Renaming the scaffold = editing",
+    "this file only.",
+    "",
+    "There is deliberately no 'assemblies' list: plugin projects declare themselves with",
+    "<DataversePluginAssembly>true</DataversePluginAssembly> (set by Abstractions.Sources.props)",
+    "and dv discovers every one under this folder, so adding a project needs no edit here.",
+    "",
+    "solution.uniqueName also seeds every component id dv generates. Changing it re-identifies",
+    "everything, so a sync would create duplicates rather than update what is already there.",
+    "Choose it once."
+  ],
+
+  "publisher": {
+    "uniqueName": "sample",
+    "friendlyName": "Sample",
+    "description": "Sample publisher",
+    "prefix": "sample",
+    "optionValuePrefix": 55973
+  },
+
+  "solution": {
+    "uniqueName": "SamplePlugins",
+    "friendlyName": "Sample Plugins",
+    "description": "Plugin assemblies and registered steps.",
+    "version": "1.0.0.0",
+
+    "$comment_packageOutput": [
+      "Optional. Overrides packageOutputDirectory in dv.json for this solution alone.",
+      "Relative to the repo root; '{solution}' is substituted. Leave it out unless this",
+      "solution's .zip genuinely belongs somewhere other than all the others."
+    ]
+  }
+}

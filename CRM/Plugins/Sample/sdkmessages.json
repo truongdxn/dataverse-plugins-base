@@ -1,0 +1,17 @@
+{
+  "$comment": [
+    "Cache of SdkMessage name -> sdkmessageid, required by 'dv pack'.",
+    "A packed solution references messages by GUID only (there is no message-name",
+    "element in the customizations.xml schema), so the ids must be known offline.",
+    "These ids are seeded per-organization and are stable, which is what makes a",
+    "solution containing plugin steps portable between environments.",
+    "",
+    "Populate once with:   dv messages pull -e dev",
+    "then COMMIT this file. After that 'dv pack' needs no environment at all,",
+    "which is what lets CI build the package with no credentials.",
+    "",
+    "'dv pack' fails with a named list of missing messages rather than guessing.",
+    "It is empty here because nobody has run the pull yet."
+  ],
+  "messages": {}
+}

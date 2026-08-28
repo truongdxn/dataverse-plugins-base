@@ -2,6 +2,9 @@
 bin/
 obj/
 artifacts/
+
+# Packed solution .zip files. Output, not source - rebuilt by 'dv pack' whenever needed.
+CRM/Solutions/
 *.user
 *.suo
 .vs/

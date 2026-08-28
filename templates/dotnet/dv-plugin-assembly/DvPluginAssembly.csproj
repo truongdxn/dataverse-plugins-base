@@ -12,9 +12,12 @@
   </PropertyGroup>
 
   <!--
-    Marks this project as a plugin assembly and links in the shared attributes and base classes.
-    This import is the only thing needed for 'dv manifest' to discover the project - there is no
-    central list to add it to.
+    Marks this project as a plugin assembly and links in the shared attributes, base classes and
+    the solution's generated schema constants. This import is the only thing needed for dv to
+    discover the project - there is no central list to add it to.
+
+    Which solution it belongs to is decided by where the project sits: the nearest solution.json
+    above it. So it must live under CRM\Plugins\<Solution>\.
   -->
   <!-- Path supplied by the repo-root Directory.Build.props, so this resolves at any depth. -->
   <Import Project="$(AbstractionsSourcesProps)" />

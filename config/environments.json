@@ -1,35 +1,22 @@
 {
   "$comment": [
-    "Environment URLs only. Secrets NEVER live here - they are read from the environment",
-    "variables named below, so this file is safe to commit.",
-    "For local overrides create config/environments.local.json (git-ignored); it is",
-    "merged over this file when present."
+    "Developer sandboxes. Nothing else belongs here.",
+    "",
+    "This repo covers the development phase only: 'dv sync' registers steps into a sandbox you",
+    "are signed into, and 'dv pack' builds a .zip for another module to import. There are no test",
+    "or production entries because nothing here imports into those - and so no credential is ever",
+    "wanted in this file. Sign-in is interactive and the token is cached outside the repo.",
+    "",
+    "To point 'dev' at your own sandbox without touching this shared file, create",
+    "config/environments.local.json (git-ignored); it is merged over this one.",
+    "",
+    "  { \"environments\": { \"dev\": { \"url\": \"https://yourorg.crm5.dynamics.com/\" } } }"
   ],
 
   "environments": {
     "dev": {
       "url": "https://orgd3d75508.crm5.dynamics.com/",
-      "auth": "interactive",
-      "allowStepDelete": false,
-      "description": "Developer sandbox - 'dv sync' registers directly here."
-    },
-    "test": {
-      "url": "https://contoso-test.crm.dynamics.com",
-      "auth": "clientsecret",
-      "tenantIdVar": "DV_TEST_TENANT_ID",
-      "clientIdVar": "DV_TEST_CLIENT_ID",
-      "clientSecretVar": "DV_TEST_CLIENT_SECRET",
-      "allowStepDelete": false,
-      "description": "Managed by solution import only."
-    },
-    "prod": {
-      "url": "https://contoso.crm.dynamics.com",
-      "auth": "clientsecret",
-      "tenantIdVar": "DV_PROD_TENANT_ID",
-      "clientIdVar": "DV_PROD_CLIENT_ID",
-      "clientSecretVar": "DV_PROD_CLIENT_SECRET",
-      "allowStepDelete": false,
-      "description": "Managed by solution import only."
+      "description": "Shared developer sandbox. Override it locally with your own."
     }
   }
 }

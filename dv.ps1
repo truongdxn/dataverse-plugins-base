@@ -23,7 +23,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 $repoRoot = $PSScriptRoot
-$toolProject = Join-Path $repoRoot 'src\Dataverse.Plugins.Tooling\Dataverse.Plugins.Tooling.csproj'
+$toolProject = Join-Path $repoRoot 'CRM\Shared\PluginBase\src\Dataverse.Plugins.Tooling\Dataverse.Plugins.Tooling.csproj'
 $toolDirectory = Join-Path $repoRoot 'artifacts\tool'
 $toolDll = Join-Path $toolDirectory 'dv.dll'
 
@@ -62,7 +62,7 @@ function Test-ToolIsStale {
     if (-not (Test-Path $toolDll)) { return $true }
 
     $builtAt = (Get-Item $toolDll).LastWriteTimeUtc
-    $sourceDirectory = Join-Path $repoRoot 'src\Dataverse.Plugins.Tooling'
+    $sourceDirectory = Join-Path $repoRoot 'CRM\Shared\PluginBase\src\Dataverse.Plugins.Tooling'
 
     # Any source or project file newer than the built dll means a rebuild is due. Cheaper than
     # running an incremental build on every single command.

@@ -1,0 +1,46 @@
+<Project>
+
+  <!--
+    Imported by every plugin TEST project. Brings in the fake pipeline harness and a test runner,
+    so a test project's own file stays down to which assembly it covers.
+
+    Importing this is also what marks the project as a plugin test project: it sets
+    DataversePluginTests, which is how 'dv test' finds it. There is no central list.
+  -->
+
+  <PropertyGroup>
+    <!-- Marks this project for discovery by 'dv test'. -->
+    <DataversePluginTests>true</DataversePluginTests>
+
+    <!--
+      net462 to match the plugin assembly under test. A net8.0 test project cannot reference a
+      net462 plugin assembly, and running the plugin for real is the entire point.
+    -->
+    <TargetFramework Condition="'$(TargetFramework)' == ''">net462</TargetFramework>
+
+    <!-- Never a plugin assembly itself: 'dv' must not try to register it. -->
+    <DataversePluginAssembly>false</DataversePluginAssembly>
+
+    <IsPackable>false</IsPackable>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(MSBuildThisFileDirectory)Dataverse.Plugins.Testing.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
+
+  <Target Name="DataverseRequireTestsFor" BeforeTargets="BeforeBuild" Condition="'$(DataverseTestsFor)' == ''">
+    <!--
+      Without it 'dv test -a <Assembly>' silently matches nothing, and the tests look like they
+      passed when they never ran.
+    -->
+    <Error Text="$(MSBuildProjectFile) imports Testing.Sources.props but does not set &lt;DataverseTestsFor&gt;. Set it to the plugin assembly this project tests, e.g. &lt;DataverseTestsFor&gt;Sample.Plugins&lt;/DataverseTestsFor&gt;, so 'dv test -a' can find it." />
+  </Target>
+
+</Project>

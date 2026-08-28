@@ -50,7 +50,8 @@ function Resolve-DotNet {
     throw ("No .NET SDK found. Install one from https://dotnet.microsoft.com/download, " +
            "or set DOTNET_ROOT to an installation that has an 'sdk' folder.")
 }
-$script:ToolProject = Join-Path $script:RepoRoot 'src\Dataverse.Plugins.Tooling\Dataverse.Plugins.Tooling.csproj'
+$script:ToolProject = Join-Path $script:RepoRoot 'CRM\Shared\PluginBase\src\Dataverse.Plugins.Tooling\Dataverse.Plugins.Tooling.csproj'
+$script:BaseSolution = Join-Path $script:RepoRoot 'CRM\Shared\PluginBase\PluginBase.sln'
 $script:ToolOutput = Join-Path $script:RepoRoot 'artifacts\tool'
 $script:ToolBuilt = $false
 
@@ -126,17 +127,51 @@ function Invoke-Dv {
     }
 }
 
-function Invoke-PluginBuild {
+function Invoke-BaseBuild {
     <#
-        Builds every project except the tooling. dv reads the compiled assemblies, so this must
-        run before manifest, pack or sync.
+        Builds the shared base: the abstractions, the test harness and the tooling. CI wants this
+        proven to compile before it runs the tooling tests.
+
+        Plugin assemblies are NOT built here - 'dv build' does that per solution, and it is the
+        only thing that knows which projects belong to which one.
     #>
     param([string] $Configuration = 'Debug')
 
-    Write-Host "Building plugin assemblies ($Configuration)..." -ForegroundColor Cyan
+    Write-Host "Building the plugin base ($Configuration)..." -ForegroundColor Cyan
 
-    $solution = Join-Path $script:RepoRoot 'DataverseBase.sln'
-    Invoke-Native -What 'Building the solution' -Command {
-        & (Resolve-DotNet) build $solution --configuration $Configuration --nologo -v minimal
+    Invoke-Native -What 'Building the plugin base' -Command {
+        & (Resolve-DotNet) build $script:BaseSolution --configuration $Configuration --nologo -v minimal
     }
+}
+
+function Invoke-BaseTest {
+    <# Runs the tooling's own tests. Plugin tests are run per solution by 'dv test'. #>
+    param([string] $Configuration = 'Debug')
+
+    Write-Host "Testing the plugin base ($Configuration)..." -ForegroundColor Cyan
+
+    Invoke-Native -What 'Testing the plugin base' -Command {
+        & (Resolve-DotNet) test $script:BaseSolution --configuration $Configuration --nologo
+    }
+}
+
+function Get-DvSolution {
+    <#
+        The PowerApps solutions in the repo, by folder name. Reads the same layout dv does rather
+        than a list somebody has to remember to update.
+    #>
+    $marker = Join-Path $script:RepoRoot 'dv.json'
+    if (-not (Test-Path $marker)) {
+        throw "dv.json not found at $marker."
+    }
+
+    $settings = Get-Content $marker -Raw | ConvertFrom-Json
+    $relative = if ($settings.PSObject.Properties['pluginsDirectory']) { $settings.pluginsDirectory } else { 'CRM/Plugins' }
+    $pluginsRoot = Join-Path $script:RepoRoot $relative.Replace('/', [System.IO.Path]::DirectorySeparatorChar)
+
+    if (-not (Test-Path $pluginsRoot)) { return @() }
+
+    Get-ChildItem $pluginsRoot -Directory |
+        Where-Object { Test-Path (Join-Path $_.FullName 'solution.json') } |
+        Select-Object -ExpandProperty Name
 }

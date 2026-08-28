@@ -4,7 +4,7 @@
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-tool_project="$repo_root/src/Dataverse.Plugins.Tooling/Dataverse.Plugins.Tooling.csproj"
+tool_project="$repo_root/CRM/Shared/PluginBase/src/Dataverse.Plugins.Tooling/Dataverse.Plugins.Tooling.csproj"
 tool_dir="$repo_root/artifacts/tool"
 tool_dll="$tool_dir/dv.dll"
 
@@ -34,7 +34,7 @@ dotnet_exe="$(resolve_dotnet)"
 tool_is_stale() {
   [ ! -f "$tool_dll" ] && return 0
   # Any source newer than the built dll means a rebuild is due.
-  [ -n "$(find "$repo_root/src/Dataverse.Plugins.Tooling" \
+  [ -n "$(find "$repo_root/CRM/Shared/PluginBase/src/Dataverse.Plugins.Tooling" \
             \( -name bin -o -name obj \) -prune -o \
             \( -name '*.cs' -o -name '*.csproj' \) -newer "$tool_dll" -print -quit 2>/dev/null)" ]
 }

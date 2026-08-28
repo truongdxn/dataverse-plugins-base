@@ -1,0 +1,56 @@
+name: build
+
+# Builds every solution in the repo and publishes each .zip as an artifact.
+#
+# It stops there on purpose. Importing a package into an environment is another module's job, so
+# this pipeline holds no environment credentials and has no deploy stage to gate. Nothing built is
+# committed - artifacts/ and CRM/Solutions/ are git-ignored and regenerated on every run.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  DOTNET_NOLOGO: 'true'
+  DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+
+jobs:
+  build:
+    # Plugin assemblies target net462. The .NET SDK builds that without Visual Studio via
+    # Microsoft.NETFramework.ReferenceAssemblies, but the packager still wants Windows - and so
+    # do the net462 plugin tests.
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install Power Platform CLI
+        run: dotnet tool install --global Microsoft.PowerApps.CLI.Tool
+
+      - name: Build, validate and test every solution
+        shell: pwsh
+        # Builds the shared base, then for each solution: builds its assemblies, validates every
+        # [PluginStep] declaration, and runs its plugin tests.
+        run: ./build/build.ps1 -Configuration Release
+
+      - name: Test the tooling
+        shell: pwsh
+        run: dotnet test CRM/Shared/PluginBase/PluginBase.sln --configuration Release --nologo
+
+      - name: Pack
+        shell: pwsh
+        # Packing needs no Dataverse connection: step ids come from source and message ids from
+        # each solution's committed sdkmessages.json.
+        run: ./build/pack.ps1 -Configuration Release -Version 1.0.0.${{ github.run_number }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: solution-packages
+          path: CRM/Solutions/**/*.zip
+          if-no-files-found: error

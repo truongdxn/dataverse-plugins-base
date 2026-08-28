@@ -22,7 +22,13 @@
 
     Then restart Visual Studio. The templates appear as:
       File > New > Project ..... "Dataverse plugin assembly"
+      File > New > Project ..... "Dataverse plugin tests"
       Add  > New Item .......... "Dataverse plugin"
+
+    Creating a whole SOLUTION folder is not offered here: it is a folder of config files rather
+    than a project, which the New Project dialog cannot produce. Use the command instead:
+
+      dotnet new dv-solution -n <Name> -o CRM/Plugins/<Name>
 #>
 [CmdletBinding()]
 param(
@@ -47,6 +53,7 @@ $itemTarget = Join-Path $vsTemplateRoot 'ItemTemplates\CSharp\Dataverse'
 
 if ($Uninstall) {
     foreach ($path in @((Join-Path $projectTarget 'DataversePluginAssembly.zip'),
+                        (Join-Path $projectTarget 'DataversePluginTests.zip'),
                         (Join-Path $itemTarget 'DataversePlugin.zip'))) {
         if (Test-Path $path) {
             Remove-Item $path -Force
@@ -62,6 +69,11 @@ if ($Uninstall) {
 $projectReplacements = [ordered]@{
     'DvPluginAssembly' = '$safeprojectname$'
     'DV_ISOLATION'     = 'Sandbox'
+}
+
+$testReplacements = [ordered]@{
+    'DvPluginTests' = '$safeprojectname$'
+    'DV_TESTS_FOR'  = '$safeprojectname$'
 }
 
 $itemReplacements = [ordered]@{
@@ -125,7 +137,7 @@ try {
 <VSTemplate Version="3.0.0" Type="Project" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
   <TemplateData>
     <Name>Dataverse plugin assembly</Name>
-    <Description>A plugin assembly that registers itself with the dv tooling. Create it under src\ so the relative import of Abstractions.Sources.props resolves.</Description>
+    <Description>A plugin assembly that registers itself with the dv tooling. Create it inside a solution folder (CRM\Plugins\&lt;Solution&gt;\), which is what decides the solution it belongs to.</Description>
     <ProjectType>CSharp</ProjectType>
     <LanguageTag>C#</LanguageTag>
     <PlatformTag>Windows</PlatformTag>
@@ -147,6 +159,45 @@ try {
 
     Set-Content -LiteralPath (Join-Path $projectStaging 'MyTemplate.vstemplate') -Value $projectVsTemplate -Encoding utf8
     New-TemplateZip -StagingDirectory $projectStaging -ZipPath (Join-Path $projectTarget 'DataversePluginAssembly.zip')
+
+    # ---------- Test project template ----------
+    $testStaging = Join-Path $staging 'tests'
+    $testSource = Join-Path $sourceRoot 'dv-plugin-tests'
+
+    Copy-WithTokens -Source (Join-Path $testSource 'DvPluginTests.csproj') `
+                    -Destination (Join-Path $testStaging 'DvPluginTests.csproj') `
+                    -Replacements $testReplacements
+    Copy-WithTokens -Source (Join-Path $testSource 'ExamplePluginTests.cs') `
+                    -Destination (Join-Path $testStaging 'ExamplePluginTests.cs') `
+                    -Replacements $testReplacements
+
+    $testVsTemplate = @'
+<?xml version="1.0" encoding="utf-8"?>
+<VSTemplate Version="3.0.0" Type="Project" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
+  <TemplateData>
+    <Name>Dataverse plugin tests</Name>
+    <Description>Tests for one plugin assembly, wired to the fake pipeline harness. Name it &lt;Assembly&gt;.Tests and it picks up the right DataverseTestsFor; correct it in the .csproj otherwise.</Description>
+    <ProjectType>CSharp</ProjectType>
+    <LanguageTag>C#</LanguageTag>
+    <PlatformTag>Windows</PlatformTag>
+    <ProjectTypeTag>Dataverse</ProjectTypeTag>
+    <SortOrder>1010</SortOrder>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>Plugins.Tests</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <LocationField>Enabled</LocationField>
+    <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
+  </TemplateData>
+  <TemplateContent>
+    <Project TargetFileName="$safeprojectname$.csproj" File="DvPluginTests.csproj" ReplaceParameters="true">
+      <ProjectItem ReplaceParameters="true" TargetFileName="ExamplePluginTests.cs">ExamplePluginTests.cs</ProjectItem>
+    </Project>
+  </TemplateContent>
+</VSTemplate>
+'@
+
+    Set-Content -LiteralPath (Join-Path $testStaging 'MyTemplate.vstemplate') -Value $testVsTemplate -Encoding utf8
+    New-TemplateZip -StagingDirectory $testStaging -ZipPath (Join-Path $projectTarget 'DataversePluginTests.zip')
 
     # ---------- Item template ----------
     $itemStaging = Join-Path $staging 'item'
@@ -178,7 +229,10 @@ try {
     Write-Host ''
     Write-Host 'Restart Visual Studio, then:' -ForegroundColor Cyan
     Write-Host '  File > New > Project  ->  "Dataverse plugin assembly"'
+    Write-Host '  File > New > Project  ->  "Dataverse plugin tests"'
     Write-Host '  Add  > New Item       ->  "Dataverse plugin"'
+    Write-Host ''
+    Write-Host 'Create the project inside a solution folder: CRM\Plugins\<Solution>' -ForegroundColor Cyan
 }
 finally {
     if (Test-Path $staging) {
