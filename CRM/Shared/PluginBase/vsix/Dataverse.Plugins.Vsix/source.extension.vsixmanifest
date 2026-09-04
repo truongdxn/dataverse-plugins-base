@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+
+  <Metadata>
+    <Identity Id="Dataverse.Plugins.Vsix.9f2c1a64-3f2b-4b6b-9a1f-6d4f1f5d2c31"
+              Version="1.0.0"
+              Language="en-US"
+              Publisher="Dataverse plugin base" />
+    <DisplayName>Dataverse plugin templates</DisplayName>
+    <Description xml:space="preserve">Project and item templates for Dataverse plugins: a plugin assembly, a plugin class with its [PluginStep] registration filled in, and a test project wired to the fake pipeline harness. Create the projects inside CRM\Plugins\&lt;Solution&gt;\, then run 'dv new solution &lt;Solution&gt;' once to configure that folder.</Description>
+    <Tags>Dataverse;Dynamics 365;Power Platform;plugin</Tags>
+  </Metadata>
+
+  <Installation>
+    <!--
+      Community covers every paid edition too. Build Tools is excluded on purpose: it has no
+      New Project dialog, so templates would install and never appear.
+    -->
+    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0,18.0)">
+      <ProductArchitecture>amd64</ProductArchitecture>
+    </InstallationTarget>
+  </Installation>
+
+  <Dependencies>
+    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
+  </Dependencies>
+
+  <Assets>
+    <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" />
+    <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="File" Path="ItemTemplates" />
+  </Assets>
+
+</PackageManifest>

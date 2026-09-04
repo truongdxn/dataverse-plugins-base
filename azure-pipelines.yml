@@ -47,4 +47,11 @@ stages:
 
           - publish: CRM/Solutions
             artifact: solution-packages
-            displayName: Publish packages
+            displayName: Publish solution packages
+
+          - pwsh: ./build/pack-packages.ps1 -Clean -Configuration Release -Version 1.0.0-ci.$(Build.BuildId)
+            displayName: Pack the base as NuGet packages
+
+          - publish: artifacts/packages
+            artifact: nuget-packages
+            displayName: Publish NuGet packages

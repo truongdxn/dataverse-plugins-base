@@ -44,7 +44,7 @@ param(
 $solutions = if ($Solution) { @($Solution) } else { Get-DvSolution }
 
 if (-not $solutions) {
-    throw 'No solutions found under CRM/Plugins. Create one with: dotnet new dv-solution -n <Name>'
+    throw 'No solutions found under CRM/Plugins. Create one with: dv new solution <Name>'
 }
 
 foreach ($name in $solutions) {

@@ -3,9 +3,13 @@ using Dataverse.Plugins.Tooling.Infrastructure;
 namespace Dataverse.Plugins.Tooling.Configuration;
 
 /// <summary>
-/// The folders and files belonging to one PowerApps solution. Everything here sits beside that
-/// solution's code, so two solutions never share a schema snapshot, a message cache or a generated
-/// file - pulling a table for one cannot churn the other.
+/// The folders and files belonging to one PowerApps solution: its identity and its code.
+/// <para>
+/// Deliberately little. Anything describing the <em>org</em> rather than the solution - the schema
+/// snapshot, the message id cache, the generated constants - is repo-wide and lives on
+/// <see cref="RepoPaths"/>, because every solution here targets the same org and duplicating that
+/// per solution only produces the same file several times over.
+/// </para>
 /// </summary>
 public sealed class SolutionPaths
 {
@@ -27,27 +31,44 @@ public sealed class SolutionPaths
     /// <summary>Absolute path to the solution folder, e.g. CRM/Plugins/Sample.</summary>
     public string Directory { get; }
 
-    /// <summary>Publisher and solution identity.</summary>
+    /// <summary>Publisher and solution identity. The only file a solution folder must hold.</summary>
     public string SolutionConfigFile => Path.Combine(Directory, MarkerFileName);
-
-    /// <summary>Committed metadata snapshot the schema constants are generated from.</summary>
-    public string SchemaFile => Path.Combine(Directory, "schema.json");
-
-    public string SdkMessageCacheFile => Path.Combine(Directory, "sdkmessages.json");
-
-    /// <summary>
-    /// Generated constants. Abstractions.Sources.props links this folder into every plugin
-    /// assembly beneath the solution, which is what makes the constants compile-checked.
-    /// </summary>
-    public string GeneratedSchemaFile => Path.Combine(Directory, "Generated", "Schema.g.cs");
 
     /// <summary>Scratch space, one folder per solution so parallel commands never collide.</summary>
     public string ArtifactsDirectory => Path.Combine(Repo.ArtifactsDirectory, Name);
 
     public string ManifestFile => Path.Combine(ArtifactsDirectory, "manifest.json");
 
-    /// <summary>Generated SolutionPackager source tree. Transient - regenerated on every pack.</summary>
-    public string SolutionSourceDirectory => Path.Combine(ArtifactsDirectory, "solution-src");
+    /// <summary>
+    /// Generated SolutionPackager source tree, in the system temp folder rather than the repo.
+    /// <para>
+    /// It is regenerated wholesale on every pack and nobody keeps it, so the repo is the wrong
+    /// place for it - and actively a bad one. This repo commonly lives in a synced folder, and
+    /// OneDrive takes ownership of directories it syncs: it marks them ReadOnly, turns them into
+    /// reparse points and adds a Deny ACE for DeleteSubdirectoriesAndFiles. The next pack then
+    /// cannot clear its own scratch tree, permanently, and no amount of retrying helps. Writing
+    /// hundreds of transient files into a sync client's watch path was the mistake; temp has none
+    /// of these problems.
+    /// </para>
+    /// <para>
+    /// Keyed by the repo path so two clones do not collide, and stable across runs so it stays
+    /// easy to inspect after a failure - 'dv pack -v' prints it.
+    /// </para>
+    /// </summary>
+    public string SolutionSourceDirectory => Path.Combine(
+        Path.GetTempPath(),
+        "dv-pack",
+        $"{Path.GetFileName(Repo.Root)}-{RepoKey()}",
+        Name);
+
+    /// <summary>Short stable hash of the repo path, so two clones of it get separate scratch.</summary>
+    private string RepoKey()
+    {
+        var hash = System.Security.Cryptography.SHA256.HashData(
+            System.Text.Encoding.UTF8.GetBytes(Repo.Root.ToLowerInvariant()));
+
+        return Convert.ToHexString(hash)[..8].ToLowerInvariant();
+    }
 
     public void EnsureArtifactsDirectory() => System.IO.Directory.CreateDirectory(ArtifactsDirectory);
 

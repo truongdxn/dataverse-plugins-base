@@ -7,9 +7,25 @@
     <RootNamespace>Dataverse.Plugins.Tooling</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>true</InvariantGlobalization>
-    <IsPackable>false</IsPackable>
     <DataversePluginAssembly>false</DataversePluginAssembly>
     <RollForward>latestMajor</RollForward>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!--
+      Shipped as a dotnet tool rather than a VSIX or a copied binary: 'dv' is a CLI, and a tool
+      package is the one distribution form that pins a version per repo (via a committed
+      .config/dotnet-tools.json) and restores with no install step.
+    -->
+    <IsPackable>true</IsPackable>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>dv</ToolCommandName>
+    <PackageId>Dataverse.Plugins.Tooling</PackageId>
+    <Description>
+      The dv CLI: build, validate, unit test and register Dataverse plugin steps declared as
+      attributes, and pack them into a PowerApps solution .zip.
+    </Description>
+    <PackageTags>dataverse;dynamics365;powerplatform;plugin;cli;dotnet-tool</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

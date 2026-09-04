@@ -14,18 +14,33 @@ public sealed class SolutionSet
 {
     private readonly RepoPaths _repo;
     private readonly List<SolutionPaths> _solutions;
+    private readonly List<string> _candidates;
 
-    private SolutionSet(RepoPaths repo, List<SolutionPaths> solutions)
+    private SolutionSet(RepoPaths repo, List<SolutionPaths> solutions, List<string> candidates)
     {
         _repo = repo;
         _solutions = solutions;
+        _candidates = candidates;
     }
 
     public IReadOnlyList<SolutionPaths> All => _solutions;
 
+    /// <summary>
+    /// Folders that hold projects but no solution.json, by name.
+    /// <para>
+    /// Visual Studio can create a plugin project but not a solution folder - that is config, not a
+    /// project - so this is what a developer gets from the New Project dialog alone. Without
+    /// tracking them, such a folder is not reported as broken, it is simply invisible: 'dv
+    /// solutions' lists nothing and says nothing, which is the worst way to learn a step is
+    /// missing.
+    /// </para>
+    /// </summary>
+    public IReadOnlyList<string> Candidates => _candidates;
+
     public static SolutionSet Discover(RepoPaths repo)
     {
         var solutions = new List<SolutionPaths>();
+        var candidates = new List<string>();
 
         if (Directory.Exists(repo.PluginsDirectory))
         {
@@ -37,10 +52,32 @@ public sealed class SolutionSet
                 {
                     solutions.Add(new SolutionPaths(repo, Path.GetFileName(directory), directory));
                 }
+                else if (HoldsAProject(directory))
+                {
+                    candidates.Add(Path.GetFileName(directory));
+                }
             }
         }
 
-        return new SolutionSet(repo, solutions);
+        return new SolutionSet(repo, solutions, candidates);
+    }
+
+    /// <summary>
+    /// An empty folder is nobody's mistake; one containing a project is somebody halfway through
+    /// creating a solution. Only the second is worth reporting.
+    /// </summary>
+    private static bool HoldsAProject(string directory)
+    {
+        try
+        {
+            return Directory
+                .EnumerateFiles(directory, "*.csproj", SearchOption.AllDirectories)
+                .Any();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return false;
+        }
     }
 
     /// <summary>
@@ -55,20 +92,28 @@ public sealed class SolutionSet
     /// </summary>
     public SolutionPaths Resolve(string requested, string workingDirectory = null)
     {
-        if (_solutions.Count == 0)
-        {
-            throw new ToolException(
-                $"No solutions found under {Relative(_repo.PluginsDirectory)}. A solution is a " +
-                $"folder containing {SolutionPaths.MarkerFileName}. Create one with " +
-                "'dotnet new dv-solution -n <Name>'.");
-        }
+        var directory = workingDirectory ?? Directory.GetCurrentDirectory();
 
         if (!string.IsNullOrWhiteSpace(requested))
         {
             return Named(requested);
         }
 
-        var inferred = FromDirectory(workingDirectory ?? Directory.GetCurrentDirectory());
+        // Checked before the "no solutions" case: standing in an unconfigured folder is a much
+        // more specific situation, and deserves the message that names it.
+        var unconfigured = CandidateFromDirectory(directory);
+
+        if (unconfigured is not null)
+        {
+            throw new ToolException(NotConfigured(unconfigured));
+        }
+
+        if (_solutions.Count == 0)
+        {
+            throw new ToolException(NoSolutions());
+        }
+
+        var inferred = FromDirectory(directory);
 
         if (inferred is not null)
         {
@@ -90,7 +135,7 @@ public sealed class SolutionSet
 
         throw new ToolException(
             "Several solutions exist, so which one to use has to be said. Pass -s <name>, run the " +
-            $"command from inside the solution's folder, or set defaultSolution in " +
+            "command from inside the solution's folder, or set defaultSolution in " +
             $"{RepoPaths.MarkerFileName}. Found: {Names()}.");
     }
 
@@ -99,10 +144,21 @@ public sealed class SolutionSet
     {
         var full = Path.GetFullPath(directory);
 
-        return _solutions.FirstOrDefault(solution =>
-            full.Equals(solution.Directory, StringComparison.OrdinalIgnoreCase) ||
-            full.StartsWith(solution.Directory + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase));
+        return _solutions.FirstOrDefault(solution => Contains(solution.Directory, full));
     }
+
+    /// <summary>The unconfigured folder containing this directory, or null.</summary>
+    public string CandidateFromDirectory(string directory)
+    {
+        var full = Path.GetFullPath(directory);
+
+        return _candidates.FirstOrDefault(
+            name => Contains(Path.Combine(_repo.PluginsDirectory, name), full));
+    }
+
+    private static bool Contains(string folder, string path) =>
+        path.Equals(folder, StringComparison.OrdinalIgnoreCase) ||
+        path.StartsWith(folder + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
 
     private SolutionPaths Named(string name, string context = "")
     {
@@ -114,7 +170,37 @@ public sealed class SolutionSet
             return match;
         }
 
-        throw new ToolException($"{context}Unknown solution '{name}'. Found: {Names()}.");
+        // Naming a folder that exists but was never configured is a different mistake from naming
+        // one that does not exist, and only one of them has a one-line fix.
+        var candidate = _candidates.FirstOrDefault(
+            existing => string.Equals(existing, name, StringComparison.OrdinalIgnoreCase));
+
+        if (candidate is not null)
+        {
+            throw new ToolException(context + NotConfigured(candidate));
+        }
+
+        throw new ToolException(
+            _solutions.Count == 0
+                ? context + NoSolutions()
+                : $"{context}Unknown solution '{name}'. Found: {Names()}.");
+    }
+
+    private string NotConfigured(string name) =>
+        $"'{name}' holds plugin projects but no {SolutionPaths.MarkerFileName}, so it is not yet a " +
+        $"PowerApps solution. Visual Studio can create the projects but not this file. Run: " +
+        $"dv new solution {name}";
+
+    private string NoSolutions()
+    {
+        var message =
+            $"No solutions found under {Relative(_repo.PluginsDirectory)}. A solution is a folder " +
+            $"containing {SolutionPaths.MarkerFileName}.";
+
+        return _candidates.Count == 0
+            ? $"{message} Create one with 'dv new solution <Name>'."
+            : $"{message} These folders hold projects but are not configured: " +
+              $"{string.Join(", ", _candidates)}. Run 'dv new solution {_candidates[0]}'.";
     }
 
     private string Names() => string.Join(", ", _solutions.Select(solution => solution.Name));

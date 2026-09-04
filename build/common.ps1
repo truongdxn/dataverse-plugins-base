@@ -55,6 +55,11 @@ $script:BaseSolution = Join-Path $script:RepoRoot 'CRM\Shared\PluginBase\PluginB
 $script:ToolOutput = Join-Path $script:RepoRoot 'artifacts\tool'
 $script:ToolBuilt = $false
 
+# NuGet.config lists artifacts/packages as a source, and NuGet errors with NU1301 when a source
+# does not exist - which stops every restore, including packages that come from nuget.org. The
+# folder is committed, so this only matters to someone who has just deleted artifacts/.
+New-Item -ItemType Directory -Force -Path (Join-Path $script:RepoRoot 'artifacts\packages') | Out-Null
+
 function Get-RepoRoot {
     $script:RepoRoot
 }

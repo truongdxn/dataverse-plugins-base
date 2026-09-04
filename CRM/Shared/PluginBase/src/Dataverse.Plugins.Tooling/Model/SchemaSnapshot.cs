@@ -25,12 +25,12 @@ public sealed class SchemaSnapshot
     /// <summary>SDK message names valid for the pulled tables. Source of the Messages constants.</summary>
     public List<string> Messages { get; set; } = new();
 
-    public static SchemaSnapshot Load(SolutionPaths paths) =>
+    public static SchemaSnapshot Load(RepoPaths paths) =>
         File.Exists(paths.SchemaFile)
             ? Normalise(JsonConfig.Read<SchemaSnapshot>(paths.SchemaFile))
             : new SchemaSnapshot();
 
-    public void Save(SolutionPaths paths)
+    public void Save(RepoPaths paths)
     {
         Tables = Tables
             .OrderBy(table => table.LogicalName, StringComparer.OrdinalIgnoreCase)

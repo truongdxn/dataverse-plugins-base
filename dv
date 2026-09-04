@@ -39,6 +39,23 @@ tool_is_stale() {
             \( -name '*.cs' -o -name '*.csproj' \) -newer "$tool_dll" -print -quit 2>/dev/null)" ]
 }
 
+# Two ways this repo can supply dv: built from source (base repo, where you may be editing it),
+# or restored from a committed tool manifest (consumer repo). Source wins when present, so a
+# stale package can never shadow the working tree.
+if [ ! -f "$tool_project" ]; then
+  manifest="$repo_root/.config/dotnet-tools.json"
+
+  if [ ! -f "$manifest" ]; then
+    echo "dv is neither built from source here nor pinned as a tool." >&2
+    echo "Expected $tool_project or $manifest." >&2
+    echo "In a consumer repo: dotnet new tool-manifest && dotnet tool install Dataverse.Plugins.Tooling" >&2
+    exit 1
+  fi
+
+  "$dotnet_exe" tool restore --tool-manifest "$manifest" >/dev/null
+  exec "$dotnet_exe" tool run dv "$@"
+fi
+
 if [ -z "${DV_NO_BUILD:-}" ] && tool_is_stale; then
   echo "Building dv..." >&2
   "$dotnet_exe" build "$tool_project" --configuration Release --output "$tool_dir" --nologo -v quiet

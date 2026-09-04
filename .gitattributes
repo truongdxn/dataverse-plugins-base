@@ -13,7 +13,7 @@
 dv     text eol=lf
 
 # Generated, but committed so a fresh clone compiles. Marked so it is collapsed in diffs.
-CRM/Plugins/*/Generated/Schema.g.cs linguist-generated=true
+config/Generated/Schema.g.cs linguist-generated=true
 
 *.png  binary
 *.zip  binary

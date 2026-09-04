@@ -1,7 +1,15 @@
 # Build output
 bin/
 obj/
-artifacts/
+artifacts/*
+
+# ...except the local package feed. NuGet.config lists artifacts/packages as a source, and NuGet
+# treats a source that does not exist as an error (NU1301) on any restore that has to reach a
+# source - so a clean clone with a cold package cache fails to restore anything at all. The empty
+# folder is committed to keep the source valid; everything in it stays ignored.
+!artifacts/packages/
+artifacts/packages/*
+!artifacts/packages/.gitkeep
 
 # Packed solution .zip files. Output, not source - rebuilt by 'dv pack' whenever needed.
 CRM/Solutions/

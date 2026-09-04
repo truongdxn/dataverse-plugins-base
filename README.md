@@ -48,6 +48,7 @@ cleanly and never fires.
 ## Quick start
 
 ```bash
+.\dv new solution CRMCore           # create a solution (or adopt a folder the IDE made)
 .\dv solutions                       # what is in this repo
 .\dv build -a Sample.Plugins         # build and validate one assembly
 .\dv test  -a Sample.Plugins         # run its tests
@@ -78,33 +79,65 @@ Nothing you do to your assembly touches anyone else's.
 
 ```
 dv.json                          repo settings; its presence marks the repo root
-config/environments.json         developer sandboxes (dev only)
+config/
+  environments.json              developer sandboxes (dev only)
+  schema.json                    table metadata snapshot — one for the repo
+  sdkmessages.json               message id cache — one for the repo
+
+config/Generated/Schema.g.cs     typed constants, generated and committed
 
 CRM/Shared/PluginBase/           the shared base, used by every solution
   src/Dataverse.Plugins.Abstractions/   [PluginStep], PluginBase — linked as source
   src/Dataverse.Plugins.Testing/        fake pipeline harness for unit tests
   src/Dataverse.Plugins.Tooling/        the dv CLI
   tests/                                the tooling's own tests
+  vsix/                                 the Visual Studio extensions
 
 CRM/Plugins/<Solution>/          one folder per PowerApps solution — SOURCE
-  solution.json                    publisher and solution identity
-  schema.json                      table metadata snapshot
-  sdkmessages.json                 message id cache
-  Generated/Schema.g.cs            typed constants, generated and committed
+  solution.json                    publisher and solution identity — the only file it needs
   <Assembly>/                      a plugin assembly project
   <Assembly>.Tests/                its tests
 
 CRM/Solutions/<Solution>/        the packed .zip — OUTPUT, git-ignored
 ```
 
+The split: **anything describing the org is repo-wide; only identity and code are per solution.**
+Every solution here targets the same org, so a schema snapshot per solution would only be the same
+file several times over.
+
 A project belongs to the solution whose folder it sits in — the nearest `solution.json` above it.
 Both MSBuild and `dv` apply that same rule, so they cannot disagree, and moving a project between
 solutions is a move with no file to edit afterwards.
 
+Visual Studio can create the *projects* but not `solution.json` — a solution folder is config, not
+a project. So `dv new solution <Name>` both creates a solution and adopts a folder the IDE already
+made, and a folder without it is reported by `dv solutions` under "Not configured yet" rather than
+silently ignored.
+
+## Using the base in another repo
+
+Nothing above `CRM/Plugins/` has to be copied. The base ships as four packages — the abstractions
+as **source** (the sandbox resolves no dependencies, so the types must compile into your own
+assembly), the test harness as an assembly, `dv` as a dotnet tool, and the templates:
+
+```bash
+.\build\pack-packages.ps1 -Clean -Version 1.0.0-local.1
+```
+
+A consumer repo then needs `dv.json`, `config/`, `CRM/Plugins/`, a `NuGet.config` pointing at the
+packages, and one reference per plugin project:
+
+```xml
+<PackageReference Include="Dataverse.Plugins.Abstractions" Version="1.0.0" />
+```
+
+No import, no props path, no `CRM/Shared/` folder. Full instructions, and how to point at a real
+feed later: **[docs/packaging.md](docs/packaging.md)**.
+
 ## What is and is not committed
 
-**Committed:** step declarations (in code), `solution.json`, `schema.json`, `sdkmessages.json`,
-`Generated/Schema.g.cs`.
+**Committed:** step declarations (in code), `solution.json`, `config/schema.json`,
+`config/sdkmessages.json`, `config/Generated/Schema.g.cs`.
 
 **Not committed:** `bin/`, `obj/`, `artifacts/`, `CRM/Solutions/` (the packed `.zip`),
 `config/environments.local.json`.
@@ -116,4 +149,6 @@ wanted, so a `.zip` can never go stale against the code.
 
 - [Getting started](docs/getting-started.md) — the end-to-end walkthrough
 - [Testing](docs/testing.md) — writing plugin unit tests
+- [Visual Studio extension](docs/vs-extension.md) — running dv from Solution Explorer
+- [Packaging](docs/packaging.md) — shipping the base as packages, and using it elsewhere
 - [Architecture](docs/architecture.md) — how it works and why, including what is unverified

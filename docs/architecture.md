@@ -24,12 +24,43 @@ MSBuild resolves that with `GetPathOfFileAbove` and `dv` walks the same director
 cannot disagree — and moving a project between solutions is a move, with no file to edit
 afterwards.
 
-Everything solution-scoped lives beside that solution's code: `solution.json`, `schema.json`,
-`sdkmessages.json`, `Generated/Schema.g.cs`. Two solutions therefore never share a snapshot, so
-pulling a table for one cannot churn another's generated file or force an unrelated review.
+A solution folder holds only `solution.json` and code. Everything describing the **org** -
+`config/schema.json`, `config/sdkmessages.json`, the generated `Schema.g.cs` - is repo-wide,
+because every solution here targets the same org and a copy per solution would only be the same
+file several times over. `config/environments.json` is repo-wide for a related reason: a sandbox
+belongs to a *developer*, not to a product.
 
-`config/environments.json` is the exception, and stays repo-wide: a sandbox belongs to a
-*developer*, not to a product.
+### What the shared snapshot costs
+
+The generated constants are linked into **every** plugin assembly, so it is worth knowing what that
+weighs. Measured on `Sample.Plugins.dll`: 45.5 KB total, of which ~38 KB is 602 schema constants -
+about 64 bytes each, being a metadata row, the identifier, and the UTF-16 value.
+
+- **Runtime: nothing.** `const string` inlines at the call site (`ldstr "name"`), so the generated
+  classes are never referenced, the CLR never loads them, and `const` emits no static constructor.
+- **Size: linear.** ~470 KB at 50 tables, ~1.9 MB at 200 - per assembly, and base64-encoded into
+  each `.zip`. Dataverse's 16 MB per-assembly limit is far off; build time and package size are the
+  real costs.
+
+What bounds it is that `--tables` is required and there is no org-wide pull, so the snapshot is the
+union of tables actually used rather than the org's table list. `dv schema codegen` warns past
+5,000 constants so that growth cannot creep up unnoticed.
+
+### Solutions Visual Studio cannot create
+
+A solution folder is config, not a project, and the New Project dialog only produces projects -
+creating one would need a VSIX. So `dv new solution` writes `solution.json` directly, and creating
+and *adopting* are the same command, because the common case is a folder the IDE already made.
+
+It refuses to overwrite an existing `solution.json`. That file carries `uniqueName`, which every
+component id derives from; rewriting it would silently re-identify everything and turn the next
+sync into a duplicate-everything run. With no template able to write that file, refusing is the
+whole safety story.
+
+`SolutionSet` tracks **candidates** - folders holding projects but no `solution.json` - so the
+half-finished state is reported by `dv solutions`, by `dv build`, and by the MSBuild error in
+`Abstractions.Sources.props`, all naming the same fix. Before that, such a folder was not reported
+as broken; it was invisible.
 
 Which solution a command acts on is resolved highest-precedence-first — explicit `-s`, then the
 working directory, then `defaultSolution` in `dv.json`, then the only solution if there is one.
@@ -62,10 +93,15 @@ So the names are generated constants rather than literals:
     FilteringAttributes = new[] { Contact.Fields.FirstName })]
 ```
 
-`dv schema pull -s <Solution> -e dev -t contact,account` reads metadata into that solution's
-committed `schema.json`; `dv schema codegen` turns it into the solution's `Generated/Schema.g.cs`,
-which `Abstractions.Sources.props` links into every plugin assembly *beneath that solution*. The
-values are `const`, so they inline and cost the assemblies nothing.
+`dv schema pull -e dev -t contact,account` reads metadata into the committed `config/schema.json`;
+`dv schema codegen` turns it into `config/Generated/Schema.g.cs`, which
+`Abstractions.Sources.props` links into every plugin assembly in every solution. Neither takes a
+`--solution`: the snapshot describes the org.
+
+Both live in `config/`, on the consumer's side of the line, because the abstractions can arrive as
+a NuGet package - and a package's own folder is a read-only cache that generated output cannot be
+written into. `Abstractions.Sources.props` finds the folder by walking up for `dv.json`, the same
+trick it uses for `solution.json`, so the rule holds whether the base is source or a package.
 
 Three details worth knowing:
 
@@ -74,8 +110,6 @@ Three details worth knowing:
   schema name already carries the casing.
 - **`--tables` is required and pulls merge per table.** There is no org-wide mode: it would generate
   an enormous file that is mostly noise, and refreshing one table must not disturb the others.
-- **A new solution starts with an empty `schema.json`**, so the first pull defines the snapshot
-  rather than merging into invented content.
 
 The generated file is committed so a fresh clone compiles without anyone connecting to Dataverse.
 
@@ -174,6 +208,17 @@ packager owns the details that are invisible until an import fails — `[Content
 the assembly bytes physically live, how sharded components fold back into `customizations.xml` — so
 a mistake in our generated source surfaces at build time instead of in production.
 
+That source tree is written to the **system temp folder**, not to `artifacts/`. It is regenerated
+wholesale every run and nobody keeps it, and putting hundreds of transient files inside the repo
+turned out to be actively harmful: this repo commonly lives in a OneDrive-synced folder, and
+OneDrive takes ownership of directories it syncs — marking them ReadOnly, converting them to
+reparse points, and adding a `Deny Everyone: DeleteSubdirectoriesAndFiles` ACE. The next pack then
+cannot clear its own scratch tree, permanently, and retrying never helps. The path is keyed by repo
+location so two clones do not collide, and `dv pack -v` prints it when something needs inspecting.
+
+`artifacts/<Solution>/manifest.json` stays in the repo: one file, written not deleted, and worth
+having to hand.
+
 ### Format details, established by experiment
 
 These were determined by driving `pac solution pack` (v2.8.1) and inspecting the resulting zip, not
@@ -227,8 +272,8 @@ A packed step references its SDK message **by GUID only** — the customizations
 message-name element. Those ids are seeded per organization and stable, which is exactly why a
 solution containing plugin steps is portable between environments at all.
 
-The solution's `sdkmessages.json` caches the map. It is generated once by `dv messages pull` and
-committed, because CI has no environment to resolve ids against. `dv pack` fails with the missing names listed
+`config/sdkmessages.json` caches the map, repo-wide like the schema. It is generated once by
+`dv messages pull` and committed, because CI has no environment to resolve ids against. `dv pack` fails with the missing names listed
 rather than guessing.
 
 ### Known limitation
@@ -261,13 +306,13 @@ type with all four root components present; and two solutions packed side by sid
 overlapping component ids.
 
 `dv schema pull` has been run successfully against a live org, so the metadata query path works.
-`CRM/Plugins/Sample/schema.json` and its generated constants came from that run.
+`config/schema.json` and its generated constants came from that run.
 
 **Not verified here**, because each needs a live environment and an interactive sign-in:
 
 - `dv sync`, and steps actually firing. Treat the first sync into a scratch sandbox as the
   remaining checkpoint.
-- `dv messages pull`. `Sample/sdkmessages.json` is still empty, so `dv pack` on Sample fails with
-  the missing messages named until somebody runs it. The packaging path itself was proven with a
+- `dv messages pull`. `config/sdkmessages.json` is still empty, so `dv pack` fails with the
+  missing messages named until somebody runs it. The packaging path itself was proven with a
   temporary cache and by the golden test.
 - Importing a package. Out of scope for this repo entirely — another module owns it.
