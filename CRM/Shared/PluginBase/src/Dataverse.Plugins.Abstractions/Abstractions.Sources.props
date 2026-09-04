@@ -13,10 +13,18 @@
     Importing this file is also what marks a project as a plugin assembly: it sets
     DataversePluginAssembly, which is how 'dv' discovers projects. Nothing has to be registered
     in a central config file.
+
+    ONE file, TWO delivery mechanisms. In this repo it is imported explicitly through
+    $(AbstractionsSourcesProps); from the NuGet package it lands in buildTransitive/ and MSBuild
+    imports it automatically. Keeping a single copy is what stops the two from drifting.
   -->
 
   <PropertyGroup>
-    <AbstractionsSourceRoot>$(MSBuildThisFileDirectory)</AbstractionsSourceRoot>
+    <!--
+      In the package the sources sit under ../contentFiles; in the repo they sit beside this file.
+    -->
+    <AbstractionsSourceRoot Condition="'$(AbstractionsSourceRoot)' == '' And Exists('$(MSBuildThisFileDirectory)../contentFiles/cs/any/')">$(MSBuildThisFileDirectory)../contentFiles/cs/any/</AbstractionsSourceRoot>
+    <AbstractionsSourceRoot Condition="'$(AbstractionsSourceRoot)' == ''">$(MSBuildThisFileDirectory)</AbstractionsSourceRoot>
 
     <!-- Marks this project for discovery by the dv tooling. -->
     <DataversePluginAssembly>true</DataversePluginAssembly>
@@ -32,14 +40,27 @@
     -->
     <DataverseSolutionFile Condition="'$(DataverseSolutionFile)' == ''">$([MSBuild]::GetPathOfFileAbove('solution.json', '$(MSBuildProjectDirectory)'))</DataverseSolutionFile>
     <DataverseSolutionDirectory Condition="'$(DataverseSolutionFile)' != ''">$([System.IO.Path]::GetDirectoryName('$(DataverseSolutionFile)'))</DataverseSolutionDirectory>
+
+    <!--
+      Where 'dv schema codegen' writes the generated constants, found the same way: walk up for
+      dv.json, which marks the repo root, then config/Generated beside the snapshot they come from.
+
+      It has to resolve to the CONSUMER's repo. When the abstractions arrive as a package their
+      own folder is inside the NuGet cache, which is read-only and gets erased whenever the cache
+      is cleared, so generated output cannot live there. Override the property for a different
+      layout.
+    -->
+    <DataverseRepoFile Condition="'$(DataverseRepoFile)' == ''">$([MSBuild]::GetPathOfFileAbove('dv.json', '$(MSBuildProjectDirectory)'))</DataverseRepoFile>
+    <DataverseSchemaDirectory Condition="'$(DataverseSchemaDirectory)' == '' And '$(DataverseRepoFile)' != ''">$([System.IO.Path]::GetDirectoryName('$(DataverseRepoFile)'))\config\Generated</DataverseSchemaDirectory>
   </PropertyGroup>
 
   <Target Name="DataverseRequireSolution" BeforeTargets="BeforeBuild" Condition="'$(DataverseSolutionFile)' == ''">
     <!--
-      Without this the project would compile, silently miss every schema constant, and fail with
-      a wall of "the name 'Contact' does not exist" - which says nothing about the real cause.
+      This is the main way the mistake gets caught. Visual Studio's New Project dialog happily
+      creates a plugin project outside any solution folder, and without this the project would
+      build, belong to nothing, and never be deployed by anything - with no error to explain why.
     -->
-    <Error Text="$(MSBuildProjectFile) is a plugin assembly but no solution.json was found in any folder above it. A plugin assembly must live inside a solution folder, e.g. CRM/Plugins/&lt;Solution&gt;/$(MSBuildProjectName)/. Create one with 'dotnet new dv-solution -n &lt;Solution&gt;'." />
+    <Error Text="$(MSBuildProjectFile) is a plugin assembly but no solution.json was found in any folder above it, so it belongs to no PowerApps solution and nothing will deploy it. Put the project under CRM/Plugins/&lt;Solution&gt;/, then run 'dv new solution &lt;Solution&gt;' once to configure that folder." />
   </Target>
 
   <ItemGroup>
@@ -50,19 +71,23 @@
       <Link>Shared\Runtime\%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Compile>
     <!--
-      This solution's generated schema constants, so table, column and message names are
-      compile-checked. Each solution generates its own, so pulling a table for one solution
-      cannot churn another's file.
+      Generated schema constants, so table, column and message names are compile-checked. One
+      snapshot for the whole repo: it describes the org, and every solution here targets the same
+      org, so generating it per solution would only produce the same file several times over.
 
       Regenerate with 'dv schema codegen'; refresh from an environment with 'dv schema pull'.
       The glob tolerates the file not existing yet, which is what makes a fresh clone build.
     -->
-    <Compile Include="$(DataverseSolutionDirectory)\Generated\**\*.cs" Condition="'$(DataverseSolutionDirectory)' != ''">
+    <Compile Include="$(DataverseSchemaDirectory)\**\*.cs" Condition="'$(DataverseSchemaDirectory)' != ''">
       <Link>Generated\%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
+    <!--
+      Listed here rather than as package dependencies so the in-repo import works too. From the
+      NuGet package these arrive transitively as well; duplicates are harmless, MSBuild dedupes.
+    -->
     <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.56" />
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
     <Reference Include="System.ServiceModel" />

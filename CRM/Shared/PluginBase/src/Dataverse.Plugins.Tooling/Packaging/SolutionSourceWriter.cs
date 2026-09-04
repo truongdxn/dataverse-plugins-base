@@ -38,14 +38,66 @@ public sealed class SolutionSourceWriter
         _messages = messages;
     }
 
+    /// <summary>
+    /// Deletes the scratch tree, retrying briefly.
+    /// <para>
+    /// A file sync client, an antivirus scan or an open Explorer window can hold a handle for a
+    /// moment, and the raw <see cref="IOException"/> would surface as an unhandled crash with a
+    /// stack trace - reading as a bug in the tool when it is a lock the person at the keyboard can
+    /// actually do something about. This repo commonly lives in a synced folder, so it is worth
+    /// waiting out rather than failing on.
+    /// </para>
+    /// </summary>
+    private static void Clear(string directory)
+    {
+        if (!Directory.Exists(directory))
+        {
+            return;
+        }
+
+        for (var attempt = 1; ; attempt++)
+        {
+            try
+            {
+                // Directory.Delete refuses a read-only entry outright, so clear the attribute
+                // first - the equivalent of what 'Remove-Item -Force' does.
+                foreach (var entry in Directory.EnumerateFileSystemEntries(
+                             directory, "*", SearchOption.AllDirectories))
+                {
+                    var attributes = File.GetAttributes(entry);
+
+                    if (attributes.HasFlag(FileAttributes.ReadOnly))
+                    {
+                        File.SetAttributes(entry, attributes & ~FileAttributes.ReadOnly);
+                    }
+                }
+
+                Directory.Delete(directory, recursive: true);
+                return;
+            }
+            catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+            {
+                if (attempt == 5)
+                {
+                    throw new ToolException(
+                        $"Could not clear '{directory}' - something is holding a file open in it. " +
+                        "A file sync client (OneDrive), an antivirus scan or an open Explorer " +
+                        "window are the usual causes. Close what is using it, or delete the " +
+                        $"folder by hand, and run the command again.{Environment.NewLine}" +
+                        exception.Message,
+                        exception);
+                }
+
+                Thread.Sleep(200 * attempt);
+            }
+        }
+    }
+
     public void Write(PluginManifest manifest, string outputDirectory, string version)
     {
-        if (Directory.Exists(outputDirectory))
-        {
-            // Regenerated wholesale every time; a stale step file left behind would otherwise be
-            // packed into the zip long after its declaration was deleted.
-            Directory.Delete(outputDirectory, recursive: true);
-        }
+        // Regenerated wholesale every time; a stale step file left behind would otherwise be
+        // packed into the zip long after its declaration was deleted.
+        Clear(outputDirectory);
 
         Directory.CreateDirectory(outputDirectory);
 

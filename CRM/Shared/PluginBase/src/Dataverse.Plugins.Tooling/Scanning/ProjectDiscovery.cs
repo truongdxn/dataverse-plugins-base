@@ -49,7 +49,7 @@ public sealed class ProjectDiscovery
                 $"No plugin assembly projects found in solution '{_solution.Name}'. A plugin " +
                 "project is one that imports Abstractions.Sources.props (which sets " +
                 "<DataversePluginAssembly>true</DataversePluginAssembly>). Add one with " +
-                "'dotnet new dv-plugin-assembly -n <Name>'.");
+                "'dv new assembly <Name>'.");
         }
 
         return projects;
@@ -163,8 +163,9 @@ public sealed class ProjectDiscovery
         {
             Log.Warn(
                 $"'{Path.GetRelativePath(root, stray)}' looks like a plugin assembly but is not " +
-                $"inside any solution folder, so it is NOT being deployed. Move it under " +
-                $"{Relative(_solution.Repo.PluginsDirectory)}/<Solution>/ to include it.");
+                "inside any solution folder, so it is NOT being deployed. Move it under " +
+                $"{Relative(_solution.Repo.PluginsDirectory)}/<Solution>/, then run " +
+                "'dv new solution <Solution>' if that folder is not configured yet.");
         }
     }
 
@@ -186,30 +187,32 @@ public sealed class ProjectDiscovery
             return false;
         }
 
-        // Any of the three ways a project can end up importing the shared props.
-        string[] markers =
-        [
+        // Every way a project can end up with the shared props applied. The PACKAGE id matters as
+        // much as the props path: a consumer repo references the package and never mentions the
+        // props at all, so leaving it out makes those projects invisible to discovery - which
+        // fails as "no plugin assembly projects found" and points at entirely the wrong thing.
+        return HasAnyMarker(
+            text,
             "DataversePluginAssembly",
             "AbstractionsSourcesProps",
             "Abstractions.Sources.props",
-        ];
-
-        return markers.Any(marker => text.Contains(marker, StringComparison.OrdinalIgnoreCase));
+            "Dataverse.Plugins.Abstractions");
     }
 
     private static bool LooksLikeTestProject(string projectPath)
     {
         var text = File.ReadAllText(projectPath);
 
-        string[] markers =
-        [
+        return HasAnyMarker(
+            text,
             "DataversePluginTests",
             "PluginTestingProps",
             "Testing.Sources.props",
-        ];
-
-        return markers.Any(marker => text.Contains(marker, StringComparison.OrdinalIgnoreCase));
+            "Dataverse.Plugins.Testing");
     }
+
+    private static bool HasAnyMarker(string text, params string[] markers) =>
+        markers.Any(marker => text.Contains(marker, StringComparison.OrdinalIgnoreCase));
 
     /// <summary>
     /// Asks MSBuild for the evaluated property values. This is authoritative - it accounts for
@@ -261,11 +264,49 @@ public sealed class ProjectDiscovery
         };
     }
 
+    /// <summary>
+    /// Projects already restored this run, so the up-to-date check is paid once each rather than
+    /// on every property lookup.
+    /// </summary>
+    private static readonly HashSet<string> Restored = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Restores before evaluating.
+    /// <para>
+    /// A package's buildTransitive props reaches a project through obj/*.nuget.g.props, which
+    /// restore is what writes. Evaluate an unrestored project and every property the props sets -
+    /// DataversePluginAssembly above all - comes back empty, so the project is silently skipped
+    /// and the command fails with "no plugin assembly projects found", pointing at entirely the
+    /// wrong thing. That is exactly what a consumer repo hits on its first command, because
+    /// nothing has restored it yet.
+    /// </para>
+    /// <para>
+    /// Failure is not fatal here: in a repo that imports the props by path there is nothing to
+    /// restore, and the evaluation that follows will succeed anyway. Let that speak instead.
+    /// </para>
+    /// </summary>
+    private static void Restore(string projectPath)
+    {
+        if (!Restored.Add(projectPath))
+        {
+            return;
+        }
+
+        var result = ProcessRunner.Run(DotNetHost.Path, ["restore", projectPath, "--nologo"]);
+
+        if (!result.Succeeded)
+        {
+            Log.Detail($"Restore of {Path.GetFileName(projectPath)} failed; evaluating anyway.");
+        }
+    }
+
     private static Dictionary<string, string> Properties(
         string projectPath,
         string configuration,
         params string[] names)
     {
+        Restore(projectPath);
+
         var arguments = new List<string>
         {
             "msbuild",

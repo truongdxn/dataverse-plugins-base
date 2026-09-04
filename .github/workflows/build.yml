@@ -54,3 +54,17 @@ jobs:
           name: solution-packages
           path: CRM/Solutions/**/*.zip
           if-no-files-found: error
+
+      - name: Pack the base as NuGet packages
+        shell: pwsh
+        # The abstractions, the test harness, the dv tool and the templates, so a consumer repo
+        # can carry none of this source. Nothing is pushed anywhere - there is no feed yet - so
+        # they are published as build artifacts and installed from a local folder. See
+        # docs/packaging.md.
+        run: ./build/pack-packages.ps1 -Clean -Configuration Release -Version 1.0.0-ci.${{ github.run_number }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nuget-packages
+          path: artifacts/packages/*.nupkg
+          if-no-files-found: error

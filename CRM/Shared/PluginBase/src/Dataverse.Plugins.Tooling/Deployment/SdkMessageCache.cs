@@ -25,7 +25,7 @@ public sealed class SdkMessageCache
 
     public Dictionary<string, Guid> Messages { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
-    public static SdkMessageCache Load(SolutionPaths paths)
+    public static SdkMessageCache Load(RepoPaths paths)
     {
         if (!File.Exists(paths.SdkMessageCacheFile))
         {
@@ -41,7 +41,7 @@ public sealed class SdkMessageCache
         return cache;
     }
 
-    public void Save(SolutionPaths paths)
+    public void Save(RepoPaths paths)
     {
         Messages = Messages
             .OrderBy(pair => pair.Key, StringComparer.OrdinalIgnoreCase)

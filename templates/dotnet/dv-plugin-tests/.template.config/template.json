@@ -1,12 +1,19 @@
 {
   "$schema": "http://json.schemastore.org/template",
   "author": "Dataverse plugin base",
-  "classifications": [ "Dataverse", "Plugin", "Test" ],
+  "classifications": [
+    "Dataverse",
+    "Plugin",
+    "Test"
+  ],
   "identity": "Dataverse.Plugins.Tests.CSharp",
   "name": "Dataverse plugin tests",
   "description": "A test project for one plugin assembly, wired to the fake pipeline harness. Runs with 'dv test -a <assembly>'.",
   "shortName": "dv-plugin-tests",
-  "tags": { "language": "C#", "type": "project" },
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
   "sourceName": "DvPluginTests",
   "preferNameDirectory": true,
   "symbols": {
@@ -16,6 +23,13 @@
       "isRequired": true,
       "replaces": "DV_TESTS_FOR",
       "description": "The plugin assembly these tests cover, e.g. Contoso.Plugins. This is what 'dv test -a' matches on."
+    },
+    "pkgVersion": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "*",
+      "replaces": "DV_PKG_VERSION",
+      "description": "Version of Dataverse.Plugins.Testing to reference. Ignored inside the base repo, which imports the harness by path instead. Defaults to '*'; pin it once you have a real feed."
     }
   }
 }

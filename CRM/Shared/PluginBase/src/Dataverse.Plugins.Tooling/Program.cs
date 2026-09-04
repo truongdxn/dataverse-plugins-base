@@ -27,6 +27,7 @@ public static class Program
 
             return cli.Verb(0).ToLowerInvariant() switch
             {
+                "new" => ScaffoldCommands.New(cli),
                 "build" => CommandHandlers.Build(cli),
                 "test" => CommandHandlers.Test(cli),
                 "manifest" => CommandHandlers.Manifest(cli),
@@ -104,6 +105,10 @@ public static class Program
               dv <command> [options]
 
             COMMANDS
+              new solution <name>   Create a solution, or configure a folder you already made
+              new assembly <name>   Add a plugin assembly project
+              new tests <name>      Add a test project for one assembly
+              new plugin <name>     Add a plugin class
               solutions             List the solutions in the repo
               build                 Build the plugin assemblies and validate every declaration
               test                  Run the solution's plugin tests
@@ -111,10 +116,20 @@ public static class Program
               validate              Validate without writing. For pull-request checks
               pack                  Build the solution .zip from the assemblies' registrations
               sync                  Register the manifest directly into a dev environment
-              messages pull         Cache sdkmessage ids into the solution's sdkmessages.json
-              schema pull           Refresh table metadata into the solution's schema.json
-                                    and regenerate the schema constants
+              messages pull         Cache sdkmessage ids into config/sdkmessages.json
+              schema pull           Refresh table metadata into config/schema.json and
+                                    regenerate the schema constants
               schema codegen        Regenerate the constants from the committed snapshot
+
+            The schema and message caches are repo-wide: they describe the org, and every solution
+            here targets the same one. Only solution.json is per solution.
+
+            NEW OPTIONS
+                  --prefix <p>      Publisher prefix for a new solution. Default: the name
+                  --unique-name <n> Solution unique name. Default: the name. Chosen ONCE - every
+                                    component id derives from it
+                  --for <assembly>  Which assembly a test project covers
+                  --entity, --message, --stage    Prefill a new plugin's [PluginStep]
 
             COMMON OPTIONS
               -s, --solution <name> Which solution to act on. Defaults to the one the working
@@ -142,15 +157,17 @@ public static class Program
                                     A pull merges, so refreshing one table leaves the others alone
 
             EXAMPLES
+              dv new solution Contoso --prefix contoso
+              dv new assembly Contoso.Plugins
               dv solutions
               dv build -a Contoso.Plugins
               dv test -a Contoso.Plugins
               dv sync -e dev -a Contoso.Plugins
               dv pack -s Contoso --version 1.0.0.42 -c Release
-              dv schema pull -s Contoso -e dev -t contact,account
+              dv schema pull -e dev -t contact,account
 
             Packing needs no Dataverse connection, which is what lets CI build the package.
-            Neither does schema codegen, once the solution's schema.json is committed.
+            Neither does schema codegen, once config/schema.json is committed.
             """);
 
         return exitCode;

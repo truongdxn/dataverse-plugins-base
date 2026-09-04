@@ -14,6 +14,34 @@
     -->
   </PropertyGroup>
 
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <PackageId>Dataverse.Plugins.Testing</PackageId>
+    <Description>
+      A fake Dataverse pipeline for unit testing plugins: PluginTestHost plus in-memory
+      IPluginExecutionContext, ITracingService and IOrganizationService. No connection or
+      environment needed.
+    </Description>
+    <PackageTags>dataverse;dynamics365;powerplatform;plugin;testing</PackageTags>
+
+    <!--
+      Unlike the abstractions, this DOES ship as an ordinary assembly. Test projects are never
+      loaded by the Dataverse sandbox, so the one-assembly constraint that forces the abstractions
+      to ship as source does not apply here.
+    -->
+  </PropertyGroup>
+
+  <ItemGroup Label="Package contents">
+    <!--
+      Markers and the test-framework bundle for consuming test projects. buildTransitive so it
+      still applies through an indirect reference. Named after the package id, which is what
+      MSBuild looks for.
+    -->
+    <None Include="Testing.Sources.props"
+          Pack="true"
+          PackagePath="buildTransitive\Dataverse.Plugins.Testing.props" />
+  </ItemGroup>
+
   <ItemGroup>
     <!--
       Microsoft.Xrm.Sdk ONLY. This project deliberately does not reference

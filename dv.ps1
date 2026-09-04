@@ -75,6 +75,40 @@ function Test-ToolIsStale {
 
 $dotnet = Resolve-DotNet
 
+# Two ways this repo can supply dv, and which one applies is decided by what is on disk rather
+# than by configuration:
+#
+#   base repo      the tool's source is here, so build it - you may well be editing it
+#   consumer repo  no source, but a committed .config/dotnet-tools.json pins the package version
+#
+# Checking for the source first matters: in the base repo a stale packaged tool must never win
+# over the code in the working tree.
+if (-not (Test-Path $toolProject)) {
+    $manifest = Join-Path $repoRoot '.config\dotnet-tools.json'
+
+    if (-not (Test-Path $manifest)) {
+        Write-Error (
+            "dv is neither built from source here nor pinned as a tool. Expected either " +
+            "$toolProject or $manifest. In a consumer repo run: dotnet new tool-manifest; " +
+            "dotnet tool install Dataverse.Plugins.Tooling")
+        exit 1
+    }
+
+    $previous = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+        # Restore is cheap once satisfied, and skipping it means a fresh clone fails on the very
+        # first command with a message about a missing tool rather than just working.
+        & $dotnet tool restore --tool-manifest $manifest | Out-Null
+        & $dotnet tool run dv @args
+    }
+    finally {
+        $ErrorActionPreference = $previous
+    }
+
+    exit $LASTEXITCODE
+}
+
 if ((-not $env:DV_NO_BUILD) -and (Test-ToolIsStale)) {
     Write-Host 'Building dv...' -ForegroundColor DarkGray
 

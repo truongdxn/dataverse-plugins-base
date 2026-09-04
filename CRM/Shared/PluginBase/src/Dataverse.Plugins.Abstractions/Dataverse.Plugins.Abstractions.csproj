@@ -15,9 +15,34 @@
     <TargetFramework>net462</TargetFramework>
     <RootNamespace>Dataverse.Plugins.Abstractions</RootNamespace>
     <AssemblyName>Dataverse.Plugins.Abstractions</AssemblyName>
-    <IsPackable>false</IsPackable>
     <!-- Deliberately NOT a plugin assembly: it is never registered in Dataverse. -->
     <DataversePluginAssembly>false</DataversePluginAssembly>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <PackageId>Dataverse.Plugins.Abstractions</PackageId>
+    <Description>
+      Registration attributes and plugin base classes for Dataverse plugins, shipped as SOURCE.
+      Adding this package compiles the types into your own assembly and marks the project for
+      discovery by the dv tooling.
+    </Description>
+    <PackageTags>dataverse;dynamics365;powerplatform;plugin</PackageTags>
+
+    <!--
+      No lib/ assembly ships, on purpose. The Dataverse sandbox loads one assembly per plugin type
+      and resolves no dependencies, so a plugin that REFERENCED this would compile and then fail at
+      runtime with an assembly-load error. Shipping only source removes the possibility: the types
+      end up compiled into the plugin assembly itself, which is the only arrangement that works.
+    -->
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SuppressDependenciesWhenPacking>false</SuppressDependenciesWhenPacking>
+
+    <!-- Nothing here is reachable at runtime, so a symbols package would be misleading. -->
+    <IncludeSymbols>false</IncludeSymbols>
+
+    <!-- A package with no lib/ is exactly what is intended; do not warn about it. -->
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,6 +52,24 @@
 
   <ItemGroup>
     <Reference Include="System.ServiceModel" />
+  </ItemGroup>
+
+  <ItemGroup Label="Package contents">
+    <!--
+      The sources the consumer compiles. contentFiles/cs/any keeps them framework-neutral; the
+      props below is what actually turns them into Compile items, so PackageCopyToOutput and
+      friends are deliberately not set - nothing should be copied anywhere.
+    -->
+    <None Include="Registration\**\*.cs" Pack="true" PackagePath="contentFiles\cs\any\Registration" />
+    <None Include="Runtime\**\*.cs" Pack="true" PackagePath="contentFiles\cs\any\Runtime" />
+
+    <!--
+      buildTransitive rather than build, so a project referencing this package indirectly still
+      gets the source and the markers. Named after the package id, which is what MSBuild imports.
+    -->
+    <None Include="Abstractions.Sources.props"
+          Pack="true"
+          PackagePath="buildTransitive\Dataverse.Plugins.Abstractions.props" />
   </ItemGroup>
 
 </Project>

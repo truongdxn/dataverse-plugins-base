@@ -1,6 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <!--
+      Declared here, not left to the props. When the harness arrives as a NuGet package its props
+      reaches the project through restore, and restore itself needs a TargetFramework to run - so
+      a project relying on the props for its TFM cannot restore at all. Explicit works both ways.
+    -->
+    <TargetFramework>net462</TargetFramework>
+
     <RootNamespace>DvPluginTests</RootNamespace>
     <AssemblyName>DvPluginTests</AssemblyName>
 
@@ -9,13 +16,20 @@
   </PropertyGroup>
 
   <!--
-    Brings in the fake pipeline harness, xunit, and net462 to match the assembly under test.
-    Path supplied by the repo-root Directory.Build.props, so this resolves at any depth.
+    Brings in the fake pipeline harness and a test runner.
+
+    TWO ways it arrives, exactly as for a plugin assembly: the props on disk in the base repo, or
+    the NuGet package in a consumer repo. The condition picks whichever applies.
   -->
-  <Import Project="$(PluginTestingProps)" />
+  <Import Project="$(PluginTestingProps)" Condition="'$(PluginTestingProps)' != ''" />
+
+  <ItemGroup Condition="'$(PluginTestingProps)' == ''">
+    <!-- Pin this before sharing the repo; see the note in the assembly template. -->
+    <PackageReference Include="Dataverse.Plugins.Testing" Version="DV_PKG_VERSION" />
+  </ItemGroup>
 
   <ItemGroup>
-    <!-- TODO: point this at the assembly named in DataverseTestsFor above. -->
+    <!-- The assembly named in DataverseTestsFor above, assumed to be a sibling folder. -->
     <ProjectReference Include="..\DV_TESTS_FOR\DV_TESTS_FOR.csproj" />
   </ItemGroup>
 

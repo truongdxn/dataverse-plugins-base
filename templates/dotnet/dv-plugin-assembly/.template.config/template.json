@@ -33,6 +33,13 @@
       "defaultValue": "Sandbox",
       "replaces": "DV_ISOLATION",
       "description": "Isolation mode the assembly is registered with."
+    },
+    "pkgVersion": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "*",
+      "replaces": "DV_PKG_VERSION",
+      "description": "Version of Dataverse.Plugins.Abstractions to reference. Ignored inside the base repo, which imports the sources by path instead. Defaults to '*'; pin it once you have a real feed."
     }
   }
 }

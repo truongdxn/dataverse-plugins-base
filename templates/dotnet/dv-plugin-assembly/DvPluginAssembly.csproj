@@ -13,13 +13,22 @@
 
   <!--
     Marks this project as a plugin assembly and links in the shared attributes, base classes and
-    the solution's generated schema constants. This import is the only thing needed for dv to
-    discover the project - there is no central list to add it to.
+    the solution's generated schema constants. This is the only thing needed for dv to discover
+    the project - there is no central list to add it to.
 
     Which solution it belongs to is decided by where the project sits: the nearest solution.json
     above it. So it must live under CRM\Plugins\<Solution>\.
+
+    TWO ways the same props arrives. In the base repo it is on disk and Directory.Build.props
+    hands over its path; in a consumer repo the NuGet package carries it and MSBuild imports it
+    automatically after restore. The condition picks whichever applies, so one template serves both.
   -->
-  <!-- Path supplied by the repo-root Directory.Build.props, so this resolves at any depth. -->
-  <Import Project="$(AbstractionsSourcesProps)" />
+  <Import Project="$(AbstractionsSourcesProps)" Condition="'$(AbstractionsSourcesProps)' != ''" />
+
+  <ItemGroup Condition="'$(AbstractionsSourcesProps)' == ''">
+    <!-- Pin this before sharing the repo. '*' takes whatever the feed holds, which is convenient
+         while developing against a local folder feed and a poor idea once several people build. -->
+    <PackageReference Include="Dataverse.Plugins.Abstractions" Version="DV_PKG_VERSION" />
+  </ItemGroup>
 
 </Project>

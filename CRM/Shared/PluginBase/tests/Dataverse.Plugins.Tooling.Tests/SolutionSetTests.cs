@@ -124,7 +124,7 @@ public class SolutionSetTests : IDisposable
         var exception = Assert.Throws<ToolException>(
             () => SolutionSet.Discover(repo).Resolve(null, repo.Root));
 
-        Assert.Contains("dv-solution", exception.Message);
+        Assert.Contains("dv new solution", exception.Message);
     }
 
     [Fact]

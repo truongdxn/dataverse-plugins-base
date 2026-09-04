@@ -6,6 +6,10 @@
 
     Importing this is also what marks the project as a plugin test project: it sets
     DataversePluginTests, which is how 'dv test' finds it. There is no central list.
+
+    ONE file, TWO delivery mechanisms, like Abstractions.Sources.props: imported explicitly in
+    this repo through $(PluginTestingProps), and automatically from buildTransitive/ when the
+    harness arrives as a NuGet package.
   -->
 
   <PropertyGroup>
@@ -15,6 +19,11 @@
     <!--
       net462 to match the plugin assembly under test. A net8.0 test project cannot reference a
       net462 plugin assembly, and running the plugin for real is the entire point.
+
+      This default only reaches a project that imports the props BY PATH. When the harness comes
+      from the NuGet package the props arrives through restore, and restore needs a TargetFramework
+      before it will run - so a project leaning on this line would fail to restore and then look
+      like it was simply not a test project. Test projects declare their own TFM; the template does.
     -->
     <TargetFramework Condition="'$(TargetFramework)' == ''">net462</TargetFramework>
 
@@ -23,13 +32,25 @@
 
     <IsPackable>false</IsPackable>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+
+    <!--
+      Every project importing this file is a test project, so bringing a runner with it saves
+      three PackageReferences in each one. Set it false to supply your own - NUnit, MSTest, a
+      different xunit version - and everything else here still applies.
+    -->
+    <DataverseIncludeTestFramework Condition="'$(DataverseIncludeTestFramework)' == ''">true</DataverseIncludeTestFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(MSBuildThisFileDirectory)Dataverse.Plugins.Testing.csproj" />
+    <!--
+      In this repo the harness is built alongside; from the package its assembly arrives in lib/
+      and needs no reference here. The condition is what lets one file serve both.
+    -->
+    <ProjectReference Include="$(MSBuildThisFileDirectory)Dataverse.Plugins.Testing.csproj"
+                      Condition="Exists('$(MSBuildThisFileDirectory)Dataverse.Plugins.Testing.csproj')" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(DataverseIncludeTestFramework)' == 'true'">
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
     <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />

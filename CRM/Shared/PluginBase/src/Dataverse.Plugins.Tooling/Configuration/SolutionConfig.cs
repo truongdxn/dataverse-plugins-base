@@ -19,7 +19,12 @@ public sealed class SolutionConfig
         return config;
     }
 
-    private void Validate(string path)
+    /// <summary>
+    /// Dataverse rejects a bad publisher prefix or solution name at import time, long after the
+    /// build. Internal rather than private so 'dv new solution' runs the same checks BEFORE it
+    /// writes the file, instead of leaving a half-made solution behind.
+    /// </summary>
+    internal void Validate(string path)
     {
         var problems = new List<string>();
 

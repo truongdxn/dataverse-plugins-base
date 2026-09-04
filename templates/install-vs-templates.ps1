@@ -25,15 +25,24 @@
       File > New > Project ..... "Dataverse plugin tests"
       Add  > New Item .......... "Dataverse plugin"
 
-    Creating a whole SOLUTION folder is not offered here: it is a folder of config files rather
-    than a project, which the New Project dialog cannot produce. Use the command instead:
+    Creating a whole SOLUTION folder is not offered here, and cannot be: it is a config file
+    rather than a project, and the New Project dialog only produces projects. Create the project
+    through the GUI, then run this once so dv can see the folder:
 
-      dotnet new dv-solution -n <Name> -o CRM/Plugins/<Name>
+      dv new solution <Name>
+
+    It also adopts a folder you already created, which is exactly this situation.
 #>
 [CmdletBinding()]
 param(
     [string] $VsVersion = '2022',
-    [switch] $Uninstall
+    [switch] $Uninstall,
+
+    # Stage the three templates into this folder and stop - do not zip, do not install.
+    # The VSIX build calls this, so the extension and this script cannot disagree about what a
+    # template contains: there is one definition, under templates/dotnet, and one piece of code
+    # that turns it into Visual Studio's shape.
+    [string] $StageOnly
 )
 
 Set-StrictMode -Version Latest
@@ -119,7 +128,13 @@ function New-TemplateZip {
     Write-Host "Installed $ZipPath" -ForegroundColor Green
 }
 
-$staging = Join-Path ([System.IO.Path]::GetTempPath()) ("dv-templates-" + [guid]::NewGuid().ToString('N'))
+$staging = if ($StageOnly) {
+    New-Item -ItemType Directory -Force -Path $StageOnly | Out-Null
+    (Resolve-Path $StageOnly).Path
+}
+else {
+    Join-Path ([System.IO.Path]::GetTempPath()) ("dv-templates-" + [guid]::NewGuid().ToString('N'))
+}
 
 try {
     # ---------- Project template ----------
@@ -158,7 +173,9 @@ try {
 '@
 
     Set-Content -LiteralPath (Join-Path $projectStaging 'MyTemplate.vstemplate') -Value $projectVsTemplate -Encoding utf8
-    New-TemplateZip -StagingDirectory $projectStaging -ZipPath (Join-Path $projectTarget 'DataversePluginAssembly.zip')
+    if (-not $StageOnly) {
+        New-TemplateZip -StagingDirectory $projectStaging -ZipPath (Join-Path $projectTarget 'DataversePluginAssembly.zip')
+    }
 
     # ---------- Test project template ----------
     $testStaging = Join-Path $staging 'tests'
@@ -197,7 +214,9 @@ try {
 '@
 
     Set-Content -LiteralPath (Join-Path $testStaging 'MyTemplate.vstemplate') -Value $testVsTemplate -Encoding utf8
-    New-TemplateZip -StagingDirectory $testStaging -ZipPath (Join-Path $projectTarget 'DataversePluginTests.zip')
+    if (-not $StageOnly) {
+        New-TemplateZip -StagingDirectory $testStaging -ZipPath (Join-Path $projectTarget 'DataversePluginTests.zip')
+    }
 
     # ---------- Item template ----------
     $itemStaging = Join-Path $staging 'item'
@@ -224,7 +243,15 @@ try {
 '@
 
     Set-Content -LiteralPath (Join-Path $itemStaging 'MyTemplate.vstemplate') -Value $itemVsTemplate -Encoding utf8
-    New-TemplateZip -StagingDirectory $itemStaging -ZipPath (Join-Path $itemTarget 'DataversePlugin.zip')
+    if (-not $StageOnly) {
+        New-TemplateZip -StagingDirectory $itemStaging -ZipPath (Join-Path $itemTarget 'DataversePlugin.zip')
+    }
+
+    if ($StageOnly) {
+        Write-Host ''
+        Write-Host "Staged templates into $staging" -ForegroundColor Green
+        return
+    }
 
     Write-Host ''
     Write-Host 'Restart Visual Studio, then:' -ForegroundColor Cyan
@@ -235,7 +262,8 @@ try {
     Write-Host 'Create the project inside a solution folder: CRM\Plugins\<Solution>' -ForegroundColor Cyan
 }
 finally {
-    if (Test-Path $staging) {
+    # Staged output is the caller's to keep.
+    if (-not $StageOnly -and (Test-Path $staging)) {
         Remove-Item $staging -Recurse -Force -ErrorAction SilentlyContinue
     }
 }

@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Wraps the dotnet new templates under templates/dotnet as a NuGet package, so a consumer repo
+    gets them with 'dotnet new install Dataverse.Plugins.Templates' instead of a path to a folder
+    it does not have.
+
+    It compiles nothing. A template package is a container: TargetFramework is only here because
+    the SDK insists on one.
+  -->
+
+  <PropertyGroup>
+    <PackageId>Dataverse.Plugins.Templates</PackageId>
+    <PackageType>Template</PackageType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Description>
+      Project and item templates for Dataverse plugins: a plugin assembly, a plugin class, and a
+      test project wired to the fake pipeline harness.
+    </Description>
+    <PackageTags>dataverse;dynamics365;powerplatform;plugin;templates;dotnet-new</PackageTags>
+
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <ContentTargetFolders>content</ContentTargetFolders>
+    <NoDefaultExcludes>true</NoDefaultExcludes>
+    <EnableDefaultItems>false</EnableDefaultItems>
+
+    <!-- A template package has no lib/ and no dependencies; both are the point, not a problem. -->
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+
+    <!-- Never a plugin assembly or a test project; keep dv's discovery away from it. -->
+    <DataversePluginAssembly>false</DataversePluginAssembly>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      bin and obj are excluded because a template that has been used locally leaves build output
+      behind, and shipping somebody's stale DLLs inside a template is a genuinely confusing bug.
+    -->
+    <Content Include="dotnet\**\*" Exclude="dotnet\**\bin\**;dotnet\**\obj\**" />
+  </ItemGroup>
+
+</Project>

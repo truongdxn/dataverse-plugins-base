@@ -10,8 +10,11 @@ Worked examples:
 
 ```bash
 cd CRM/Plugins/<Solution>
-dotnet new dv-plugin-tests -n <Assembly>.Tests --testsFor <Assembly>
+..\..\..\dv new tests <Assembly>.Tests --for <Assembly>
 ```
+
+Or in Visual Studio: File → New → Project → **Dataverse plugin tests**, created inside the solution
+folder. Check `<DataverseTestsFor>` in the generated `.csproj` names the assembly you meant.
 
 The whole project file is:
 

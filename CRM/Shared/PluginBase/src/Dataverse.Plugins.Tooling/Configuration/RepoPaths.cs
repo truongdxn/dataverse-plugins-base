@@ -36,6 +36,30 @@ public sealed class RepoPaths
     /// <summary>Git-ignored overrides merged over environments.json when present.</summary>
     public string LocalEnvironmentsConfigFile => Path.Combine(ConfigDirectory, "environments.local.json");
 
+    /// <summary>
+    /// Committed metadata snapshot the schema constants are generated from. Repo-wide, not per
+    /// solution: it describes the org, and every solution in this repo targets the same one.
+    /// </summary>
+    public string SchemaFile => Path.Combine(ConfigDirectory, "schema.json");
+
+    /// <summary>Message name to id cache. Repo-wide for the same reason as the schema.</summary>
+    public string SdkMessageCacheFile => Path.Combine(ConfigDirectory, "sdkmessages.json");
+
+    /// <summary>
+    /// Generated constants, linked into every plugin assembly in every solution by
+    /// Abstractions.Sources.props.
+    /// <para>
+    /// Beside the snapshot it is generated from, and firmly on the consumer's side of the line:
+    /// when the abstractions arrive as a NuGet package their own folder is inside the package
+    /// cache - read-only, and erased by 'dotnet nuget locals --clear'. Generated output cannot
+    /// live there.
+    /// </para>
+    /// </summary>
+    public string GeneratedSchemaFile => Path.Combine(GeneratedDirectory, "Schema.g.cs");
+
+    /// <summary>Where 'dv schema codegen' writes. Matches DataverseSchemaDirectory in the props.</summary>
+    public string GeneratedDirectory => Path.Combine(ConfigDirectory, "Generated");
+
     /// <summary>Transient build output. Regenerated freely; never committed.</summary>
     public string ArtifactsDirectory => Path.Combine(Root, "artifacts");
 

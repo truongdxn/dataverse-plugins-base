@@ -1,0 +1,85 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Packages the Visual Studio templates as a .vsix, so a developer installs them once instead of
+    running a script on every machine.
+
+    NOT built by build.ps1 or by CI, and not part of PluginBase.sln. Building a VSIX needs the
+    "Visual Studio extension development" workload - MSBuild from the .NET SDK alone cannot do it -
+    and requiring that of everyone who touches this repo, to produce something only the people
+    using the GUI ever install, is a bad trade. Build it deliberately:
+
+        msbuild CRM\Shared\PluginBase\vsix\Dataverse.Plugins.Vsix\Dataverse.Plugins.Vsix.csproj ^
+                /p:Configuration=Release /restore
+
+    using the Developer Command Prompt's msbuild, not 'dotnet build'.
+
+    templates/install-vs-templates.ps1 remains the fallback for a machine without that workload,
+    and produces the same templates from the same source.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <RootNamespace>Dataverse.Plugins.Vsix</RootNamespace>
+    <AssemblyName>Dataverse.Plugins.Vsix</AssemblyName>
+    <UseCodebase>true</UseCodebase>
+
+    <GeneratePkgDefFile>false</GeneratePkgDefFile>
+    <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
+    <IncludeDebugSymbolsInVSIXContainer>false</IncludeDebugSymbolsInVSIXContainer>
+    <CreateVsixContainer>true</CreateVsixContainer>
+    <DeployExtension>false</DeployExtension>
+
+    <!-- Never a plugin assembly, a test project, or a NuGet package. -->
+    <DataversePluginAssembly>false</DataversePluginAssembly>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.10.2185" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="source.extension.vsixmanifest">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+
+  <Target Name="StageTemplates" BeforeTargets="BeforeBuild">
+    <!--
+      Generates the template content from templates/dotnet by calling the same script that
+      installs it by hand. One definition of what a template contains; two ways to deliver it.
+      Regenerated every build so an edit under templates/dotnet cannot be silently left behind.
+    -->
+    <PropertyGroup>
+      <TemplateStagingDirectory>$(MSBuildProjectDirectory)\obj\template-staging</TemplateStagingDirectory>
+      <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\..\..\..\..'))</RepoRoot>
+    </PropertyGroup>
+
+    <RemoveDir Directories="$(TemplateStagingDirectory)" />
+
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(RepoRoot)templates\install-vs-templates.ps1&quot; -StageOnly &quot;$(TemplateStagingDirectory)&quot;" />
+  </Target>
+
+  <Target Name="CollectStagedTemplates" AfterTargets="StageTemplates" BeforeTargets="BeforeBuild">
+    <!--
+      Collected in a separate target because items created inside the target that produced the
+      files would be evaluated before those files exist.
+
+      VSIXSubPath is what puts each template in its own folder inside the container; without it
+      Visual Studio sees three .vstemplate files in one directory and shows one broken entry.
+    -->
+    <ItemGroup>
+      <VSIXSourceItem Include="$(TemplateStagingDirectory)\project\**\*">
+        <VSIXSubPath>ProjectTemplates\Dataverse\PluginAssembly</VSIXSubPath>
+      </VSIXSourceItem>
+      <VSIXSourceItem Include="$(TemplateStagingDirectory)\tests\**\*">
+        <VSIXSubPath>ProjectTemplates\Dataverse\PluginTests</VSIXSubPath>
+      </VSIXSourceItem>
+      <VSIXSourceItem Include="$(TemplateStagingDirectory)\item\**\*">
+        <VSIXSubPath>ItemTemplates\CSharp\Dataverse\Plugin</VSIXSubPath>
+      </VSIXSourceItem>
+    </ItemGroup>
+  </Target>
+
+</Project>
