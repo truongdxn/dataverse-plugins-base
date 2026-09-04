@@ -19,6 +19,10 @@ its source.
 Writes four `.nupkg` into `artifacts/packages/`, which `NuGet.config` already lists as a package
 source — so they are restorable immediately, with no feed and no credentials.
 
+The folder is committed empty, even though `artifacts/` is otherwise ignored. NuGet fails a restore
+outright when a configured source does not exist (`NU1301`), so on a clean clone with a cold package
+cache *nothing* restores — not even packages coming from nuget.org — until the folder is there.
+
 CI does the same and publishes them as build artifacts. **Nothing is pushed anywhere yet.**
 
 ## Using the base in another repo

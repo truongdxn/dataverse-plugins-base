@@ -45,7 +45,9 @@ $projects = @(
 )
 
 if ($Clean -and (Test-Path $output)) {
-    Remove-Item $output -Recurse -Force
+    # Contents only. The folder itself is a NuGet source, and a source that does not exist is a
+    # restore error, so removing it would break the next build rather than clean up after it.
+    Remove-Item (Join-Path $output '*.nupkg') -Force -ErrorAction SilentlyContinue
 }
 
 New-Item -ItemType Directory -Force -Path $output | Out-Null
