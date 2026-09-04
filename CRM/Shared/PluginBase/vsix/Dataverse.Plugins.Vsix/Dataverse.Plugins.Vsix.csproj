@@ -53,7 +53,8 @@
     -->
     <PropertyGroup>
       <TemplateStagingDirectory>$(MSBuildProjectDirectory)\obj\template-staging</TemplateStagingDirectory>
-      <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\..\..\..\..'))</RepoRoot>
+      <!-- GetFullPath returns no trailing separator, so '$(RepoRoot)templates' would run together. -->
+      <RepoRoot>$([MSBuild]::EnsureTrailingSlash($([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\..\..\..\..'))))</RepoRoot>
     </PropertyGroup>
 
     <RemoveDir Directories="$(TemplateStagingDirectory)" />

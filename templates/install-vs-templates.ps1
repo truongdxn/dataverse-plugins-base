@@ -75,14 +75,21 @@ if ($Uninstall) {
 
 # Tokens the shared template sources use, mapped to the parameters Visual Studio expands.
 # 'dotnet new' maps the same tokens itself via .template.config/template.json.
+#
+# DV_PKG_VERSION has no Visual Studio equivalent to expand into - the New Project dialog has no
+# parameter to ask for it - so it takes the same default 'dotnet new' uses. It only matters outside
+# this repo: in here $(AbstractionsSourcesProps) is set, the sources are imported by path, and the
+# PackageReference is conditioned out unread. Pin it once there is a real feed.
 $projectReplacements = [ordered]@{
     'DvPluginAssembly' = '$safeprojectname$'
     'DV_ISOLATION'     = 'Sandbox'
+    'DV_PKG_VERSION'   = '*'
 }
 
 $testReplacements = [ordered]@{
-    'DvPluginTests' = '$safeprojectname$'
-    'DV_TESTS_FOR'  = '$safeprojectname$'
+    'DvPluginTests'  = '$safeprojectname$'
+    'DV_TESTS_FOR'   = '$safeprojectname$'
+    'DV_PKG_VERSION' = '*'
 }
 
 $itemReplacements = [ordered]@{

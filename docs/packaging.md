@@ -128,6 +128,10 @@ Its template content is generated at build time by `templates/install-vs-templat
 the same script that installs templates by hand — so the extension and the script cannot disagree
 about what a template contains.
 
-> **Unverified.** This was written on a machine with no Visual Studio, so the VSIX has never been
-> built or installed. Expect to iterate on the first build. `install-vs-templates.ps1` works today
-> and is the fallback.
+> **Partly verified.** The staging step runs green, and the templates it produces carry no
+> unsubstituted tokens. The `.vsix` container itself has still not been produced here — this was
+> written on a machine with no Visual Studio — and has never been installed. The first real build
+> found two defects, both fixed: `RepoRoot` was concatenated without a separator, and the Visual
+> Studio path never expanded `DV_PKG_VERSION`, so a project created outside this repo would have
+> asked NuGet for a package version of `DV_PKG_VERSION`. Expect the possibility of more.
+> `install-vs-templates.ps1` works today and is the fallback.
