@@ -109,9 +109,13 @@ Whichever you choose, replace the `local` source in `NuGet.config`, add the push
 versions: the templates default `Version` to `*`, which is fine against a local folder and a poor
 idea once several people build at once.
 
-## The VSIX
+## The VSIXes
 
-`CRM/Shared/PluginBase/vsix/Dataverse.Plugins.Vsix` packages the Visual Studio templates as a
+Two, both under `CRM/Shared/PluginBase/vsix/`: `Dataverse.Plugins.Vsix` packages the project and
+item templates, and `Dataverse.Plugins.VsCommands` runs dv from Solution Explorer - that one has
+its own page, **[vs-extension.md](vs-extension.md)**. What follows applies to both.
+
+`Dataverse.Plugins.Vsix` packages the Visual Studio templates as a
 `.vsix`. It is deliberately **not** in `PluginBase.sln` and not built by CI: building a VSIX needs
 the *Visual Studio extension development* workload, and requiring that of everyone who touches this
 repo — to produce something only GUI users install — is a bad trade.

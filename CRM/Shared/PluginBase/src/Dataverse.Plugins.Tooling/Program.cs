@@ -35,6 +35,7 @@ public static class Program
                 "pack" => CommandHandlers.Pack(cli),
                 "sync" => CommandHandlers.Sync(cli),
                 "solutions" => CommandHandlers.Solutions(cli),
+                "environments" => CommandHandlers.Environments(cli),
                 "messages" => Messages(cli),
                 "schema" => Schema(cli),
                 "" or "help" => Help(0),
@@ -110,6 +111,7 @@ public static class Program
               new tests <name>      Add a test project for one assembly
               new plugin <name>     Add a plugin class
               solutions             List the solutions in the repo
+              environments          List the sandboxes --env accepts
               build                 Build the plugin assemblies and validate every declaration
               test                  Run the solution's plugin tests
               manifest              Build the manifest and write it to artifacts/<solution>/

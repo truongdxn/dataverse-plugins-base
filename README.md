@@ -91,7 +91,7 @@ CRM/Shared/PluginBase/           the shared base, used by every solution
   src/Dataverse.Plugins.Testing/        fake pipeline harness for unit tests
   src/Dataverse.Plugins.Tooling/        the dv CLI
   tests/                                the tooling's own tests
-  vsix/                                 the Visual Studio templates extension
+  vsix/                                 the Visual Studio extensions
 
 CRM/Plugins/<Solution>/          one folder per PowerApps solution — SOURCE
   solution.json                    publisher and solution identity — the only file it needs
@@ -149,5 +149,6 @@ wanted, so a `.zip` can never go stale against the code.
 
 - [Getting started](docs/getting-started.md) — the end-to-end walkthrough
 - [Testing](docs/testing.md) — writing plugin unit tests
+- [Visual Studio extension](docs/vs-extension.md) — running dv from Solution Explorer
 - [Packaging](docs/packaging.md) — shipping the base as packages, and using it elsewhere
 - [Architecture](docs/architecture.md) — how it works and why, including what is unverified

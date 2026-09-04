@@ -49,6 +49,10 @@ pwsh templates/install-vs-templates.ps1
 Restart Visual Studio afterwards. You do not need this for the command-line path — `dv new`
 installs what it needs on first use.
 
+There is also an extension that runs the dv commands themselves from Solution Explorer — build,
+test and sync one assembly by right-clicking it. It has to be built once from Visual Studio:
+**[vs-extension.md](vs-extension.md)**. Everything below works with or without it.
+
 ---
 
 ## 1. Create a solution

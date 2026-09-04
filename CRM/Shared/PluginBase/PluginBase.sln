@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{24CC85E5
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dataverse.Plugins.Tooling.Tests", "tests\Dataverse.Plugins.Tooling.Tests\Dataverse.Plugins.Tooling.Tests.csproj", "{25116840-C8B4-44D2-B51F-F7821BB8AD87}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dataverse.Plugins.VsCommands.Tests", "vsix\tests\Dataverse.Plugins.VsCommands.Tests\Dataverse.Plugins.VsCommands.Tests.csproj", "{E79DC711-661B-4AE3-8E9A-FEAB85FBE388}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,11 +42,16 @@ Global
 		{25116840-C8B4-44D2-B51F-F7821BB8AD87}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{25116840-C8B4-44D2-B51F-F7821BB8AD87}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{25116840-C8B4-44D2-B51F-F7821BB8AD87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E79DC711-661B-4AE3-8E9A-FEAB85FBE388}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E79DC711-661B-4AE3-8E9A-FEAB85FBE388}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E79DC711-661B-4AE3-8E9A-FEAB85FBE388}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E79DC711-661B-4AE3-8E9A-FEAB85FBE388}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8F24986C-1238-4514-BC9E-C1B32D9B2B07} = {32275C99-829A-40E8-B994-91B217BE51A7}
 		{F5313859-8E74-489D-80DA-0172D40684E4} = {32275C99-829A-40E8-B994-91B217BE51A7}
 		{83D15B2E-CF99-4745-9203-B3CDB0904E84} = {32275C99-829A-40E8-B994-91B217BE51A7}
 		{25116840-C8B4-44D2-B51F-F7821BB8AD87} = {24CC85E5-0193-432B-9BD3-B573A178CA29}
+		{E79DC711-661B-4AE3-8E9A-FEAB85FBE388} = {24CC85E5-0193-432B-9BD3-B573A178CA29}
 	EndGlobalSection
 EndGlobal

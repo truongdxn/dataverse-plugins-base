@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Tests for the extension's logic, without the extension.
+
+    The VSIX project itself needs the Visual Studio SDK and cannot be built by 'dotnet build', so
+    it stays out of PluginBase.sln and out of CI. Its decision-making does not: everything that
+    works out which repo a click belongs to, what dv should be run as, and what arguments it gets
+    lives in ../core as plain C# and is compiled here, where the whole suite runs on any machine.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <DataversePluginAssembly>false</DataversePluginAssembly>
+    <RootNamespace>Dataverse.Plugins.VsCommands.Tests</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      The same files the VSIX project links. Not a project reference: the core has no project of
+      its own, precisely so that it can be compiled into an assembly that must target net472 for
+      Visual Studio and into this one, which does not.
+    -->
+    <Compile Include="..\..\core\**\*.cs" Link="Core\%(Filename)%(Extension)" />
+  </ItemGroup>
+
+</Project>

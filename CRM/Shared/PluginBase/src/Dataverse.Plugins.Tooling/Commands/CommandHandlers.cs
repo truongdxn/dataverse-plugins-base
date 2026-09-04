@@ -64,6 +64,59 @@ public static class CommandHandlers
         return 0;
     }
 
+    /// <summary>
+    /// Lists the developer sandboxes --env accepts.
+    /// <para>
+    /// Small, but it is the only place that knows environments.local.json is merged over the
+    /// shared file. Anything that needs the list - the Visual Studio extension's environment
+    /// picker, or somebody wondering what to pass - asks dv instead of reading the JSON itself and
+    /// getting the overlay wrong.
+    /// </para>
+    /// <para>
+    /// The line format is a contract: two spaces, the name, then "  ->  ". The extension parses
+    /// it, so EnvironmentsCommandTests pins the shape.
+    /// </para>
+    /// </summary>
+    public static int Environments(CommandLine cli, RepoPaths repo = null)
+    {
+        repo ??= RepoPaths.Discover();
+
+        // Listing is not the command to fail over a missing file. Saying the file is not there,
+        // and where it goes, is more use than a stack of "configuration file not found".
+        if (!File.Exists(repo.EnvironmentsConfigFile))
+        {
+            Log.Warn(
+                $"No environments file at {repo.EnvironmentsConfigFile}. Create it with a 'dev' " +
+                "entry pointing at your sandbox, or add config/environments.local.json to " +
+                "override one locally.");
+
+            return 0;
+        }
+
+        var config = EnvironmentConfig.Load(repo);
+
+        if (config.Environments.Count == 0)
+        {
+            Log.Warn($"No environments configured in {repo.EnvironmentsConfigFile}.");
+            return 0;
+        }
+
+        Log.Heading($"Environments in {repo.Root}");
+
+        foreach (var name in config.Environments.Keys.OrderBy(key => key, StringComparer.OrdinalIgnoreCase))
+        {
+            var environment = config.Environments[name];
+            var description = string.IsNullOrWhiteSpace(environment.Description)
+                ? string.Empty
+                : $"  {environment.Description}";
+
+            Log.Item($"{name}  ->  {environment.Url}{description}");
+        }
+
+        Log.Detail("Sign-in is interactive; the token is cached outside the repo.");
+        return 0;
+    }
+
     /// <summary>Builds the plugin assemblies and validates every declaration. The pre-push check.</summary>
     public static int Build(CommandLine cli)
     {

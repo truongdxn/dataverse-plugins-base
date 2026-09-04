@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <!--
+    The menus. Two submenus called "Dataverse": one on a project node, one on the solution node.
+
+    Every button carries DynamicVisibility so BeforeQueryStatus can hide it outside a dv repo -
+    without it, Visual Studio ignores Visible = false and the menu would appear on every project
+    in every solution a developer ever opens.
+
+    Ids live in PackageIds.cs as well. A mismatch between the two is silent: the item appears and
+    the click goes nowhere.
+  -->
+
+  <Extern href="stdidcmd.h" />
+  <Extern href="vsshlids.h" />
+
+  <Commands package="guidDvCommandsPackage">
+
+    <Menus>
+      <Menu guid="guidDvCommandSet" id="ProjectMenu" priority="0x0100" type="Menu">
+        <Parent guid="guidDvCommandSet" id="ProjectMenuGroup" />
+        <Strings>
+          <ButtonText>Dataverse</ButtonText>
+          <CommandName>Dataverse</CommandName>
+        </Strings>
+      </Menu>
+
+      <Menu guid="guidDvCommandSet" id="SolutionMenu" priority="0x0100" type="Menu">
+        <Parent guid="guidDvCommandSet" id="SolutionMenuGroup" />
+        <Strings>
+          <ButtonText>Dataverse</ButtonText>
+          <CommandName>Dataverse</CommandName>
+        </Strings>
+      </Menu>
+    </Menus>
+
+    <Groups>
+      <!-- Where each submenu hangs in Solution Explorer. -->
+      <Group guid="guidDvCommandSet" id="ProjectMenuGroup" priority="0x0600">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_PROJNODE" />
+      </Group>
+      <Group guid="guidDvCommandSet" id="SolutionMenuGroup" priority="0x0600">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_SOLNNODE" />
+      </Group>
+
+      <!-- Inside the project submenu: the daily loop, then scaffolding, separated by group. -->
+      <Group guid="guidDvCommandSet" id="ProjectLoopGroup" priority="0x0100">
+        <Parent guid="guidDvCommandSet" id="ProjectMenu" />
+      </Group>
+      <Group guid="guidDvCommandSet" id="ProjectScaffoldGroup" priority="0x0200">
+        <Parent guid="guidDvCommandSet" id="ProjectMenu" />
+      </Group>
+
+      <!-- Inside the solution submenu: build, then package and sync, then repo data, then new. -->
+      <Group guid="guidDvCommandSet" id="SolutionLoopGroup" priority="0x0100">
+        <Parent guid="guidDvCommandSet" id="SolutionMenu" />
+      </Group>
+      <Group guid="guidDvCommandSet" id="SolutionShipGroup" priority="0x0200">
+        <Parent guid="guidDvCommandSet" id="SolutionMenu" />
+      </Group>
+      <Group guid="guidDvCommandSet" id="SolutionRepoGroup" priority="0x0300">
+        <Parent guid="guidDvCommandSet" id="SolutionMenu" />
+      </Group>
+      <Group guid="guidDvCommandSet" id="SolutionScaffoldGroup" priority="0x0400">
+        <Parent guid="guidDvCommandSet" id="SolutionMenu" />
+      </Group>
+    </Groups>
+
+    <Buttons>
+
+      <!-- ===== Project node ===== -->
+      <Button guid="guidDvCommandSet" id="cmdidBuildAssembly" priority="0x0100" type="Button">
+        <Parent guid="guidDvCommandSet" id="ProjectLoopGroup" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings><ButtonText>Build assembly</ButtonText></Strings>
+      </Button>
+      <Button guid="guidDvCommandSet" id="cmdidTestAssembly" priority="0x0110" type="Button">
+        <Parent guid="guidDvCommandSet" id="ProjectLoopGroup" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings><ButtonText>Test assembly</ButtonText></Strings>
+      </Button>
+      <Button guid="guidDvCommandSet" id="cmdidValidateAssembly" priority="0x0120" type="Button">
+        <Parent guid="guidDvCommandSet" id="ProjectLoopGroup" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings><ButtonText>Validate registrations</ButtonText></Strings>
+      </Button>
+      <Button guid="guidDvCommandSet" id="cmdidManifestAssembly" priority="0x0130" type="Button">
+        <Parent guid="guidDvCommandSet" id="ProjectLoopGroup" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings><ButtonText>Write manifest</ButtonText></Strings>
+      </Button>
+      <Button guid="guidDvCommandSet" id="cmdidSyncAssembly" priority="0x0140" type="Button">
+        <Parent guid="guidDvCommandSet" id="ProjectLoopGroup" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings><ButtonText>Sync to dev environment...</ButtonText></Strings>
+      </Button>
+
+      <Button guid="guidDvCommandSet" id="cmdidNewPlugin" priority="0x0100" type="Button">
+        <Parent guid="guidDvCommandSet" id="ProjectScaffoldGroup" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings><ButtonText>New plugin class...</ButtonText></Strings>
+      </Button>
+      <Button guid="guidDvCommandSet" id="cmdidNewTests" priority="0x0110" type="Button">
+        <Parent guid="guidDvCommandSet" id="ProjectScaffoldGroup" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings><ButtonText>New test project...</ButtonText></Strings>
+      </Button>
+
+      <!-- ===== Solution node ===== -->
+      <Button guid="guidDvCommandSet" id="cmdidBuildSolution" priority="0x0100" type="Button">
+        <Parent guid="guidDvCommandSet" id="SolutionLoopGroup" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings><ButtonText>Build all assemblies</ButtonText></Strings>
+      </Button>
+      <Button guid="guidDvCommandSet" id="cmdidTestSolution" priority="0x0110" type="Button">
+        <Parent guid="guidDvCommandSet" id="SolutionLoopGroup" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings><ButtonText>Run plugin tests</ButtonText></Strings>
+      </Button>
+      <Button guid="guidDvCommandSet" id="cmdidValidateSolution" priority="0x0120" type="Button">
+        <Parent guid="guidDvCommandSet" id="SolutionLoopGroup" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings><ButtonText>Validate registrations</ButtonText></Strings>
+      </Button>
+      <Button guid="guidDvCommandSet" id="cmdidManifestSolution" priority="0x0130" type="Button">
+        <Parent guid="guidDvCommandSet" id="SolutionLoopGroup" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings><ButtonText>Write manifest</ButtonText></Strings>
+      </Button>
+
+      <Button guid="guidDvCommandSet" id="cmdidPackSolution" priority="0x0100" type="Button">
+        <Parent guid="guidDvCommandSet" id="SolutionShipGroup" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings><ButtonText>Pack solution .zip...</ButtonText></Strings>
+      </Button>
+      <Button guid="guidDvCommandSet" id="cmdidSyncSolution" priority="0x0110" type="Button">
+        <Parent guid="guidDvCommandSet" id="SolutionShipGroup" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings><ButtonText>Sync to dev environment...</ButtonText></Strings>
+      </Button>
+
+      <Button guid="guidDvCommandSet" id="cmdidListSolutions" priority="0x0100" type="Button">
+        <Parent guid="guidDvCommandSet" id="SolutionRepoGroup" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings><ButtonText>List solutions</ButtonText></Strings>
+      </Button>
+      <Button guid="guidDvCommandSet" id="cmdidListEnvironments" priority="0x0110" type="Button">
+        <Parent guid="guidDvCommandSet" id="SolutionRepoGroup" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings><ButtonText>List environments</ButtonText></Strings>
+      </Button>
+      <Button guid="guidDvCommandSet" id="cmdidSchemaPull" priority="0x0120" type="Button">
+        <Parent guid="guidDvCommandSet" id="SolutionRepoGroup" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings><ButtonText>Pull schema...</ButtonText></Strings>
+      </Button>
+      <Button guid="guidDvCommandSet" id="cmdidSchemaCodegen" priority="0x0130" type="Button">
+        <Parent guid="guidDvCommandSet" id="SolutionRepoGroup" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings><ButtonText>Regenerate schema constants</ButtonText></Strings>
+      </Button>
+      <Button guid="guidDvCommandSet" id="cmdidMessagesPull" priority="0x0140" type="Button">
+        <Parent guid="guidDvCommandSet" id="SolutionRepoGroup" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings><ButtonText>Pull message ids...</ButtonText></Strings>
+      </Button>
+
+      <Button guid="guidDvCommandSet" id="cmdidNewSolution" priority="0x0100" type="Button">
+        <Parent guid="guidDvCommandSet" id="SolutionScaffoldGroup" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings><ButtonText>New solution...</ButtonText></Strings>
+      </Button>
+      <Button guid="guidDvCommandSet" id="cmdidNewAssembly" priority="0x0110" type="Button">
+        <Parent guid="guidDvCommandSet" id="SolutionScaffoldGroup" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings><ButtonText>New plugin assembly...</ButtonText></Strings>
+      </Button>
+
+    </Buttons>
+
+  </Commands>
+
+  <Symbols>
+    <GuidSymbol name="guidDvCommandsPackage" value="{29d3e9c7-d1df-48ff-abd4-712cc61fcb61}" />
+
+    <GuidSymbol name="guidDvCommandSet" value="{f9c58263-c38c-4ea6-afd2-9f0ac80884bf}">
+      <IDSymbol name="ProjectMenuGroup" value="0x1000" />
+      <IDSymbol name="ProjectMenu" value="0x1001" />
+      <IDSymbol name="ProjectLoopGroup" value="0x1002" />
+      <IDSymbol name="ProjectScaffoldGroup" value="0x1003" />
+
+      <IDSymbol name="SolutionMenuGroup" value="0x1100" />
+      <IDSymbol name="SolutionMenu" value="0x1101" />
+      <IDSymbol name="SolutionLoopGroup" value="0x1102" />
+      <IDSymbol name="SolutionShipGroup" value="0x1103" />
+      <IDSymbol name="SolutionRepoGroup" value="0x1104" />
+      <IDSymbol name="SolutionScaffoldGroup" value="0x1105" />
+
+      <IDSymbol name="cmdidBuildAssembly" value="0x0100" />
+      <IDSymbol name="cmdidTestAssembly" value="0x0101" />
+      <IDSymbol name="cmdidValidateAssembly" value="0x0102" />
+      <IDSymbol name="cmdidManifestAssembly" value="0x0103" />
+      <IDSymbol name="cmdidSyncAssembly" value="0x0104" />
+      <IDSymbol name="cmdidNewPlugin" value="0x0105" />
+      <IDSymbol name="cmdidNewTests" value="0x0106" />
+
+      <IDSymbol name="cmdidBuildSolution" value="0x0200" />
+      <IDSymbol name="cmdidTestSolution" value="0x0201" />
+      <IDSymbol name="cmdidValidateSolution" value="0x0202" />
+      <IDSymbol name="cmdidManifestSolution" value="0x0203" />
+      <IDSymbol name="cmdidPackSolution" value="0x0204" />
+      <IDSymbol name="cmdidSyncSolution" value="0x0205" />
+      <IDSymbol name="cmdidListSolutions" value="0x0206" />
+      <IDSymbol name="cmdidListEnvironments" value="0x0207" />
+      <IDSymbol name="cmdidSchemaPull" value="0x0208" />
+      <IDSymbol name="cmdidSchemaCodegen" value="0x0209" />
+      <IDSymbol name="cmdidMessagesPull" value="0x020A" />
+      <IDSymbol name="cmdidNewSolution" value="0x020B" />
+      <IDSymbol name="cmdidNewAssembly" value="0x020C" />
+    </GuidSymbol>
+  </Symbols>
+
+</CommandTable>
